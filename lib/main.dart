@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -11,26 +12,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme:
-          ThemeData(primaryColor: Colors.white, accentColor: Colors.lightGreen),
-      home: MyHomePage(title: 'Home Page'),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
+      supportedLocales: [
+        const Locale("en"),
+        const Locale.fromSubtags(languageCode: 'zh'), // generic Chinese 'zh'
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'), // generic simplified Chinese 'zh_Hans'
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'), // generic traditional Chinese 'zh_Hant'
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN'), // 'zh_Hans_CN'
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'), // 'zh_Hant_TW'
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK'), // 'zh_Hant_HK'
+      ],
+      theme: ThemeData(primaryColor: Colors.white, accentColor: Colors.lightGreen),
+      home: MyHomePage(title: ''),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
+
+  MyHomePage({Key? key, this.title = ""}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -38,12 +43,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  String _date = "";
+  DateTime? _date;
 
   _MyHomePageState() {
-    final now = DateTime.now();
-    final df = DateFormat("yyyy MM");
-    _date = df.format(now);
+    _date = DateTime.now().toLocal();
+  }
+
+  String formattedDate() {
+    final df = DateFormat.yMMM(Localizations.localeOf(context).languageCode);
+    return df.format(_date ?? DateTime.now());
   }
 
   void _incrementCounter() {
@@ -80,13 +88,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      leadingWidth: 80,
+      leadingWidth: 96,
       leading: Center(
           child: TextButton(
               onPressed: () {},
-              child: Text(_date, style: Theme.of(context).textTheme.bodyText1)
-          )
-      ),
+              child: Text(formattedDate(),
+                  style: Theme.of(context).textTheme.bodyText1))),
       title: Text(widget.title),
     );
   }
