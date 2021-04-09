@@ -56,24 +56,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   DateTime? _date;
-  List<Bill>? bills;
 
   _MyHomePageState() {
     _date = DateTime.now().toLocal();
-  }
-
-  void _initBillsData() {
-    if (this.bills != null) return;
-    final locale = Localizations.localeOf(context);
-    final symbol =
-        NumberFormat.simpleCurrency(locale: locale.toString()).currencySymbol;
-    final randomBills = List<Bill>.generate(
-        100,
-        (index) => Bill.name(DateTime.now().millisecond, "随机生成账户: ${index + 1}",
-            "随机生成类别", Random.secure().nextInt(100), symbol, "随机生成备注"));
-    setState(() {
-      this.bills = randomBills;
-    });
   }
 
   String formattedDate() {
@@ -107,39 +92,38 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildBillsView() {
-    _initBillsData();
-    print("bills count: ${bills?.length}");
-    return ListView.builder(
-      itemCount: bills?.length ?? 0,
-      itemBuilder: (context, index) {
-        final bill = bills?.elementAt(index);
-        if (bill == null) return Container();
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                bill.account,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-              Text(
-                "${bill.amount.toString()}${bill.currencySymbol}",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    ?.copyWith(color: Colors.red),
-              ),
-              Text(bill.genre,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2
-                      ?.copyWith(color: Colors.black38))
-            ],
-          ),
-        );
-      },
-    );
+    // return ListView.builder(
+    //   itemCount: bills?.length ?? 0,
+    //   itemBuilder: (context, index) {
+    //     final bill = bills?.elementAt(index);
+    //     if (bill == null) return Container();
+    //     return Padding(
+    //       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+    //       child: Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //         crossAxisAlignment: CrossAxisAlignment.center,
+    //         children: [
+    //           Text(
+    //             bill.account,
+    //             style: Theme.of(context).textTheme.bodyText2,
+    //           ),
+    //           Text(
+    //             "${bill.amount.toString()}${bill.currencySymbol}",
+    //             style: Theme.of(context)
+    //                 .textTheme
+    //                 .bodyText1
+    //                 ?.copyWith(color: Colors.red),
+    //           ),
+    //           Text(bill.genre,
+    //               style: Theme.of(context)
+    //                   .textTheme
+    //                   .bodyText2
+    //                   ?.copyWith(color: Colors.black38))
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
+    return Container();
   }
 }
