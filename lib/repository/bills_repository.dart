@@ -11,7 +11,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
 
   @override
   Future<List<Bill>> getBillsByPage(int page) async {
-    return Future.delayed(Duration(seconds: 5), () {
+    return Future.delayed(Duration(seconds: 2), () {
       return List<Bill>.generate(
           100,
           (index) => Bill.name(

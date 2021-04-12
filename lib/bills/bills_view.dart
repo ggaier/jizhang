@@ -53,21 +53,31 @@ class BillsView extends StatelessWidget {
         itemCount: bills.length,
         itemBuilder: (context, index) {
           final bill = bills[index];
+          var themeData = Theme.of(context);
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      bill.genre,
+                      style: themeData.textTheme.subtitle1,
+                    ),
+                    Text(bill.account, style: themeData.textTheme.caption)
+                  ],
+                ),
                 Text(
-                  bill.account,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  bill.remark,
+                  style: themeData.textTheme.caption,
                 ),
                 Text(
                   "${bill.amount.toString()}${bill.currencySymbol}",
-                  style: Theme.of(context).textTheme.bodyText1?.copyWith(color: Colors.red),
-                ),
-                Text(bill.genre, style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.black38))
+                  style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
+                )
               ],
             ),
           );

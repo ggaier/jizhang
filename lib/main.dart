@@ -29,18 +29,21 @@ class MyApp extends StatelessWidget {
         // generic simplified Chinese 'zh_Hans'
         const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
         // generic traditional Chinese 'zh_Hant'
-        const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN'),
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans', countryCode: 'CN'),
         // 'zh_Hans_CN'
-        const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
         // 'zh_Hant_TW'
-        const Locale.fromSubtags(
-            languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK'),
+        const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK'),
         // 'zh_Hant_HK'
       ],
-      theme:
-      ThemeData(primaryColor: Colors.white, accentColor: Colors.lightGreen),
+      theme: ThemeData(
+        primaryColor: Colors.white,
+        primaryColorLight: Colors.white,
+        primaryColorDark: Color.fromARGB(255, 57, 62, 70),
+        disabledColor: Color.fromARGB(255, 238, 238, 238),
+        hintColor: Color.fromARGB(255, 238, 238, 238),
+        accentColor: Color.fromARGB(255, 0, 173, 181),
+      ),
       home: RepositoryProvider(
         create: (context) => BillsRepositoryImpl(),
         child: BillsView(title: ""),
