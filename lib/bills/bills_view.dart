@@ -12,9 +12,11 @@ class BillsView extends StatelessWidget {
   BillsView({required String title}) : _title = title;
 
   String _formattedDate(BuildContext context) {
-    final df = DateFormat.yMMM(Localizations.localeOf(context).languageCode);
+    final df = DateFormat.yMMM(languageCode(context));
     return df.format(_date ?? DateTime.now());
   }
+
+  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -49,40 +51,94 @@ class BillsView extends StatelessWidget {
   Widget _buildBillsView(BuildContext context) {
     return BlocBuilder<BillsBloc, List<Bill>>(builder: (context, state) {
       final bills = state;
-      return ListView.builder(
+      return ListView.separated(
         itemCount: bills.length,
-        itemBuilder: (context, index) {
-          final bill = bills[index];
-          var themeData = Theme.of(context);
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      bill.genre,
-                      style: themeData.textTheme.subtitle1,
-                    ),
-                    Text(bill.account, style: themeData.textTheme.caption)
-                  ],
-                ),
-                Text(
-                  bill.remark,
-                  style: themeData.textTheme.caption,
-                ),
-                Text(
-                  "${bill.amount.toString()}${bill.currencySymbol}",
-                  style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
-                )
-              ],
-            ),
-          );
-        },
+        itemBuilder: (context, index) => _billItem(bills, context, index),
+        separatorBuilder: (context, index) => _separatedItem(bills, context, index),
       );
     });
+  }
+
+  Widget _billItem(List<Bill> bills, BuildContext context, int index) {
+    final bill = bills[index];
+    var themeData = Theme.of(context);
+    if (bill is DayBill) {
+      return _buildDayBillView(bill, context);
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                bill.genre,
+                style: themeData.textTheme.subtitle1,
+              ),
+              Text(bill.account, style: themeData.textTheme.caption)
+            ],
+          ),
+          Text(
+            bill.remark,
+            style: themeData.textTheme.caption,
+          ),
+          Text(
+            "${bill.amount.toString()}${bill.currencySymbol}",
+            style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _separatedItem(List<Bill> bills, BuildContext context, int index) {
+    final bill = bills[index];
+    if(bill is DayBill){
+      return const Divider(indent: 16);
+    }
+    return Container();
+  }
+
+  bool _isNotSameDay(Bill bill, Bill preBill) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(bill.billTime);
+    final year = dateTime.year;
+    final month = dateTime.month;
+    final day = dateTime.day;
+    final preDateTime = DateTime.fromMillisecondsSinceEpoch(preBill.billTime);
+    final preYear = preDateTime.year;
+    final preMonth = preDateTime.month;
+    final preDay = preDateTime.day;
+    if (year != preYear) return true;
+    if (month != preMonth) return true;
+    if (day != preDay) return true;
+    return false;
+  }
+
+  Widget _buildDayBillView(DayBill bill, BuildContext context) {
+    var themeData = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          RichText(
+              text: TextSpan(text: bill.getDay() + "日\n", style: themeData.textTheme.headline6, children: <TextSpan>[
+            TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
+          ])),
+          Text(
+            "总支出：${bill.expenseAmount / 100.0}",
+            style: themeData.textTheme.bodyText1?.copyWith(color: Colors.green[300]),
+          ),
+          Text(
+            "总收入：${bill.earningAmount / 100.0}",
+            style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
+          )
+        ],
+      ),
+    );
   }
 }
