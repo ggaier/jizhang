@@ -4,16 +4,15 @@ import 'dart:math';
 import 'package:accountbook/vo/bill.dart';
 
 abstract class BillsRepositoryIn {
-  Future<void> getBillsByPage(int page);
+  Future<List<Bill>> getBillsByPage(int page);
 }
 
 class BillsRepositoryImpl implements BillsRepositoryIn {
-  final _controller = StreamController<List<Bill>>();
 
   @override
-  Future<void> getBillsByPage(int page) async {
-    await Future.delayed(Duration(seconds: 5), () {
-      final randomBills = List<Bill>.generate(
+  Future<List<Bill>> getBillsByPage(int page) async {
+    return Future.delayed(Duration(seconds: 5), () {
+      return List<Bill>.generate(
           100,
           (index) => Bill.name(
               DateTime.now().millisecond,
@@ -22,7 +21,6 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
               Random.secure().nextInt(100),
               "¥",
               "随机生成备注"));
-      _controller.add(randomBills);
     });
   }
 }
