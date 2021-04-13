@@ -7,6 +7,7 @@ import 'bills/bills_view.dart';
 class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     with ChangeNotifier, PopNavigatorRouterDelegateMixin<ABRoutePath> {
   ABRoutePath? _currentRoutePath;
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   ABRoutePath? get currentConfiguration => _currentRoutePath ?? ABRoutePath.home();
@@ -14,6 +15,7 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
   @override
   Widget build(BuildContext context) {
     return Navigator(
+      key: _navigatorKey,
       pages: [
         MaterialPage(
             child: BillsView(
@@ -27,6 +29,7 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
           MaterialPage(child: AddBillView(), key: ValueKey("AddBill"))
       ],
       onPopPage: (route, result) {
+        print("onPopPage: $route, result: $result");
         if (!route.didPop(result)) {
           return false;
         }
@@ -46,8 +49,6 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     _currentRoutePath = ABRoutePath.add();
     notifyListeners();
   }
-
-  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   GlobalKey<NavigatorState>? get navigatorKey => _navigatorKey;
