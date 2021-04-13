@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:accountbook/bills/bills_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/vo/bill.dart';
@@ -8,8 +10,9 @@ import 'package:intl/intl.dart';
 class BillsView extends StatelessWidget {
   final String _title;
   final DateTime? _date = DateTime.now().toLocal();
+  final VoidCallback _onTapped;
 
-  BillsView({required String title}) : _title = title;
+  BillsView({required String title, required VoidCallback onTapped}) : _title = title, _onTapped = onTapped;
 
   String _formattedDate(BuildContext context) {
     final df = DateFormat.yMMM(languageCode(context));
@@ -30,7 +33,7 @@ class BillsView extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: _buildBillsView(context),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: _onTapped,
           tooltip: 'Increment',
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
