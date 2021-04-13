@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-enum BillType { earning, expense, summary }
+enum BillType { earning, expense, summary, transfer }
 
 class Bill {
   int id;
