@@ -1,3 +1,4 @@
+import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
 
@@ -37,22 +38,7 @@ class _AddBillState extends State {
       child: Form(
         child: Column(
           children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text("日期"),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: "当前时间",
-                    onTap: () {
-                      //弹出时间选择弹框
-                    },
-                  ),
-                )
-              ],
-            ),
+            _dateFormField(),
             Row(
               children: [
                 Padding(
@@ -114,6 +100,39 @@ class _AddBillState extends State {
     );
   }
 
+  Row _dateFormField() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text("日期"),
+        ),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: DateTime.now().fmtDateForAddBill(),
+                  onTap: () => _showDatePicker(context),
+                  showCursor: false,
+                  readOnly: true,
+                ),
+              ),
+              Expanded(
+                child: TextFormField(
+                  initialValue: TimeOfDay.now().format(context),
+                  onTap: () => _showTimePicker(context),
+                  showCursor: false,
+                  readOnly: true,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
   Widget _billTypeView(Color expenseColor, Color earningColor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,5 +181,19 @@ class _AddBillState extends State {
         //do nothing
       }
     });
+  }
+
+  void _showDatePicker(BuildContext context) async {
+    var nowTime = DateTime.now();
+    final dateTime = await showDatePicker(
+        context: context, initialDate: nowTime, firstDate: DateTime.fromMillisecondsSinceEpoch(0), lastDate: nowTime);
+    if (dateTime == null) return;
+    print("selected date time: ${dateTime.fmtDateForAddBill()}");
+  }
+
+  _showTimePicker(BuildContext context) async {
+    final timeOfDay = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (timeOfDay == null) return;
+    print("time of day: ${timeOfDay.format(context)}");
   }
 }
