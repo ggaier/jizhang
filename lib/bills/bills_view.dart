@@ -106,11 +106,11 @@ class BillsView extends StatelessWidget {
   }
 
   bool _isNotSameDay(Bill bill, Bill preBill) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(bill.billTime);
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(bill.billDate);
     final year = dateTime.year;
     final month = dateTime.month;
     final day = dateTime.day;
-    final preDateTime = DateTime.fromMillisecondsSinceEpoch(preBill.billTime);
+    final preDateTime = DateTime.fromMillisecondsSinceEpoch(preBill.billDate);
     final preYear = preDateTime.year;
     final preMonth = preDateTime.month;
     final preDay = preDateTime.day;

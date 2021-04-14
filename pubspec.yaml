@@ -27,6 +27,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_bloc: ^7.0.0
+  equatable: ^2.0.0
 
 
 

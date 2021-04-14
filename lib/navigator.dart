@@ -1,7 +1,10 @@
 import 'package:accountbook/add_bill/add_bill_view.dart';
 import 'package:accountbook/app_route_path.dart';
+import 'package:accountbook/repository/bills_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'add_bill/add_bill_bloc.dart';
 import 'bills/bills_view.dart';
 
 class ABRouteDelegate extends RouterDelegate<ABRoutePath>
@@ -26,7 +29,12 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
         if (_currentRoutePath?.isUnknown == true)
           MaterialPage(key: ValueKey("UnknownPage"), child: Center(child: Text("404 not found")))
         else if (_currentRoutePath?.isAddBill == true)
-          MaterialPage(child: AddBillView(), key: ValueKey("AddBill"))
+          MaterialPage(
+              child: BlocProvider(
+                create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context)),
+                child: AddBillView(),
+              ),
+              key: ValueKey("AddBill"))
       ],
       onPopPage: (route, result) {
         print("onPopPage: $route, result: $result");
