@@ -1,3 +1,5 @@
+import 'package:accountbook/accounts/bill_accounts_bloc.dart';
+import 'package:accountbook/accounts/bill_accounts_repo.dart';
 import 'package:accountbook/add_bill/add_bill_view.dart';
 import 'package:accountbook/app_route_path.dart';
 import 'package:accountbook/repository/bills_repository.dart';
@@ -20,18 +22,19 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     return Navigator(
       key: _navigatorKey,
       pages: [
-        MaterialPage(
-            child: BillsView(
-              title: "",
-              onTapped: _handleOnAddBillClicked,
-            ),
-            key: ValueKey("BillsView")),
+        MaterialPage(child: BillsView(title: "", onTapped: _handleOnAddBillClicked), key: ValueKey("BillsView")),
         if (_currentRoutePath?.isUnknown == true)
           MaterialPage(key: ValueKey("UnknownPage"), child: Center(child: Text("404 not found")))
         else if (_currentRoutePath?.isAddBill == true)
           MaterialPage(
-              child: BlocProvider(
-                create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context)),
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider(create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
+                  BlocProvider(
+                    create: (context) =>
+                        BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
+                  ),
+                ],
                 child: AddBillView(),
               ),
               key: ValueKey("AddBill"))

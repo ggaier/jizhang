@@ -1,5 +1,6 @@
+import 'package:accountbook/accounts/bill_accounts_bloc.dart';
+import 'package:accountbook/accounts/bill_accounts_view.dart';
 import 'package:accountbook/add_bill/add_bill_bloc.dart';
-import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
@@ -38,27 +39,15 @@ class AddBillView extends StatelessWidget {
   }
 
   Widget _billForm(Bill bill) {
-    _billTimeTEC.text = bill.billTimeOfTheDay.format(context);
-    _billDateTEC.text = bill.billDateDateTime.fmtDateForAddBill();
+    final bloc = context.read<BillAccountsBloc>();
+    print("bill account bloc: $bloc");
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
         child: Column(
           children: [
             _dateFormField(bill),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text("账户"),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(hintText: "请选择您的付款账户"),
-                  ),
-                )
-              ],
-            ),
+            BillAccountSelectorView(),
             Row(
               children: [
                 Padding(
@@ -108,7 +97,8 @@ class AddBillView extends StatelessWidget {
   }
 
   Row _dateFormField(Bill bill) {
-    print("bill date: ${bill.billDateDateTime.fmtDateForAddBill()}, ${bill.billDate}, ${bill.billTimeOfTheDay.format(context)}, ${bill.billTime}");
+    _billTimeTEC.text = bill.billTimeOfTheDay.format(context);
+    _billDateTEC.text = bill.billDateDateTime.fmtDateForAddBill();
     return Row(
       children: [
         Padding(
