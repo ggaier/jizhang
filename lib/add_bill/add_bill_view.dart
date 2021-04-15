@@ -1,6 +1,7 @@
-import 'package:accountbook/accounts/bill_accounts_bloc.dart';
-import 'package:accountbook/accounts/bill_accounts_view.dart';
 import 'package:accountbook/add_bill/add_bill_bloc.dart';
+import 'package:accountbook/bill_accounts/bill_accounts_bloc.dart';
+import 'package:accountbook/bill_accounts/bill_accounts_view.dart';
+import 'package:accountbook/bill_category/bill_categories_view.dart';
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
@@ -64,19 +65,7 @@ class _AddBillViewState extends State {
           children: [
             _dateFormField(bill),
             BillAccountSelectorView(),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text("分类"),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(hintText: "请选择账单类别"),
-                  ),
-                )
-              ],
-            ),
+            BillCategorySelectorView(),
             Row(
               children: [
                 Padding(

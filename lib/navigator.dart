@@ -1,12 +1,14 @@
-import 'package:accountbook/accounts/bill_accounts_bloc.dart';
-import 'package:accountbook/accounts/bill_accounts_repo.dart';
 import 'package:accountbook/add_bill/add_bill_view.dart';
 import 'package:accountbook/app_route_path.dart';
+import 'package:accountbook/bill_category/bill_categories_repo.dart';
+import 'package:accountbook/bill_category/bill_category_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'add_bill/add_bill_bloc.dart';
+import 'bill_accounts/bill_accounts_bloc.dart';
+import 'bill_accounts/bill_accounts_repo.dart';
 import 'bills/bills_view.dart';
 
 class ABRouteDelegate extends RouterDelegate<ABRoutePath>
@@ -31,9 +33,13 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                 providers: [
                   BlocProvider(create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
                   BlocProvider(
-                    create: (context) =>
-                        BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
+                    create: (context) => BillAccountsBloc(
+                      accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context),
+                    ),
                   ),
+                  BlocProvider(
+                    create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
+                  )
                 ],
                 child: AddBillView(),
               ),

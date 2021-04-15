@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:accountbook/accounts/bill_accounts_repo.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'account_entity.dart';
+import '../vo/account_entity.dart';
+import 'bill_accounts_repo.dart';
 
 part 'bill_accounts_event.dart';
 

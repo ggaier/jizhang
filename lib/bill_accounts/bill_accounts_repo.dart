@@ -1,4 +1,4 @@
-import 'package:accountbook/accounts/account_entity.dart';
+import '../vo/account_entity.dart';
 
 abstract class AccountsRepoIn {
   Future<List<Account>> getAllAccounts();

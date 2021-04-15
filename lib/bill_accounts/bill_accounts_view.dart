@@ -1,11 +1,11 @@
-import 'package:accountbook/accounts/bill_accounts_bloc.dart';
-import 'package:accountbook/accounts/bill_accounts_repo.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'account_entity.dart';
+import '../vo/account_entity.dart';
+import 'bill_accounts_bloc.dart';
+import 'bill_accounts_repo.dart';
 
 class BillAccountSelectorView extends StatefulWidget {
   @override
@@ -16,6 +16,12 @@ class BillAccountSelectorView extends StatefulWidget {
 
 class _BillAccountState extends State {
   final TextEditingController _billAccountTEC = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _billAccountTEC.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

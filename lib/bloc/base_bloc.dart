@@ -29,7 +29,13 @@ class ABSuccessState<Item> extends BaseBlocState {
   }
 }
 
-class ABFailureState extends BaseBlocState {}
+class ABFailureState extends BaseBlocState {
+  final Exception? reason;
+
+  ABFailureState([this.reason]);
+
+  ABFailureState.cause(String cause) : reason = Exception(cause);
+}
 
 extension BlocStateExt on BaseBlocState {
   bool get isInitial {
