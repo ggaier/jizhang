@@ -48,6 +48,10 @@ extension BlocStateExt on BaseBlocState {
     return this is ABInProgressState;
   }
 
+  bool isType<T>(T clz) {
+    return this is T;
+  }
+
   int getProgress() {
     if (this.isSuccess) {
       return 100;

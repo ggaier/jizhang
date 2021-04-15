@@ -6,17 +6,33 @@ import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// ignore: must_be_immutable
-class AddBillView extends StatelessWidget {
+class AddBillView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _AddBillViewState();
+  }
+}
+
+class _AddBillViewState extends State {
   static const _BTN_PADDING = 36.0;
   static const _BTN_RADIUS = 18.0;
-  late TextEditingController _billDateTEC = TextEditingController();
-  late TextEditingController _billTimeTEC = TextEditingController();
-  late BuildContext context;
+  final TextEditingController _billDateTEC = TextEditingController();
+  final TextEditingController _billTimeTEC = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _billDateTEC.dispose();
+    _billTimeTEC.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
     return BlocBuilder<AddBillBloc, Bill>(
       builder: (context, state) {
         return Scaffold(
