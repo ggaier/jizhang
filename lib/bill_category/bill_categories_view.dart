@@ -72,17 +72,21 @@ class _BillCategorySelectorState extends State {
                 Navigator.pop(context);
                 return Container();
               }
+              print("category length: ${categories.length}");
               return Column(
                 children: [
                   AppBar(automaticallyImplyLeading: true, title: Text("账户")),
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      var category = categories[index];
-                      return TextButton(onPressed: () => Navigator.pop(context, category), child: Text(category.name));
-                    },
-                    itemCount: categories.length,
+                  Flexible(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (context, index) {
+                        var category = categories[index];
+                        return TextButton(
+                            onPressed: () => Navigator.pop(context, category), child: Text(category.name));
+                      },
+                      itemCount: categories.length,
+                    ),
                   )
                 ],
               );
