@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 abstract class BillsRepositoryIn {
   Future<List<Bill>> getBillsByPage(int page);
+  Future<void> saveBill(Bill bill);
 }
 
 class BillsRepositoryImpl implements BillsRepositoryIn {
@@ -28,6 +29,13 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
             "随机生成备注",
             BillType.expense);
       });
+    });
+  }
+
+  @override
+  Future<void> saveBill(Bill bill) {
+    return Future.delayed(Duration(milliseconds: 50), (){
+        print("save success");
     });
   }
 }

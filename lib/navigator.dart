@@ -45,7 +45,7 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
               key: ValueKey("AddBill"))
       ],
       onPopPage: (route, result) {
-        print("onPopPage: $route, result: $result");
+        print("onPopPage: $route, result: ${result??""}");
         if (!route.didPop(result)) {
           return false;
         }

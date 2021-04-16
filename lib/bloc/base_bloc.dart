@@ -37,6 +37,8 @@ class ABFailureState extends BaseBlocState {
   ABFailureState.cause(String cause) : reason = Exception(cause);
 }
 
+class ABCompleteState extends BaseBlocState {}
+
 extension BlocStateExt on BaseBlocState {
   bool get isInitial {
     return this is ABInitialState;

@@ -1,5 +1,6 @@
 import 'package:accountbook/bill_accounts/bill_accounts_view.dart';
 import 'package:accountbook/bill_category/bill_categories_view.dart';
+import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,8 @@ class _AddBillViewState extends State {
     super.dispose();
     _billDateTEC.dispose();
     _billTimeTEC.dispose();
+    _billCategoryTEC.dispose();
+    _billAccountTEC.dispose();
   }
 
   @override
@@ -39,14 +42,19 @@ class _AddBillViewState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddBillBloc, Bill>(
+    return BlocBuilder<AddBillBloc, BaseBlocState>(
       builder: (context, state) {
-        print("state : ${state.toJson()}");
+        if (state is ABCompleteState) {
+          Navigator.pop(context, "");
+          return Container();
+        }
+        var bill = _addBillBloc.stateBill;
+        print("state : ${bill.toJson()}");
         return Scaffold(
           appBar: AppBar(
-            title: Text(_billTypeToTitle(state.billType)),
+            title: Text(_billTypeToTitle(bill.billType)),
           ),
-          body: _buildAddBillBody(state),
+          body: _buildAddBillBody(bill),
         );
       },
     );
@@ -67,7 +75,7 @@ class _AddBillViewState extends State {
       child: Form(
         child: Column(
           children: [
-            _dateFormField(bill),
+            _billDateFormField(bill),
             _datePayAccountField(bill),
             _dateCategoryFormField(bill),
             _billAmountView(),
@@ -81,7 +89,11 @@ class _AddBillViewState extends State {
 
   Widget _saveBillBtn() {
     return Center(
-      child: ElevatedButton(child: const Text("保存"), onPressed: () {}),
+      child: ElevatedButton(
+          child: const Text("保存"),
+          onPressed: () {
+            _addBillBloc.saveBill();
+          }),
     );
   }
 
@@ -120,7 +132,7 @@ class _AddBillViewState extends State {
     );
   }
 
-  Row _dateFormField(Bill bill) {
+  Row _billDateFormField(Bill bill) {
     _billTimeTEC.text = bill.billTimeOfTheDay.format(context);
     _billDateTEC.text = bill.billDateDateTime.fmtDateForAddBill();
     return Row(
