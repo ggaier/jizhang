@@ -12,7 +12,9 @@ class BillsView extends StatelessWidget {
   final DateTime? _date = DateTime.now().toLocal();
   final VoidCallback _onTapped;
 
-  BillsView({required String title, required VoidCallback onTapped}) : _title = title, _onTapped = onTapped;
+  BillsView({required String title, required VoidCallback onTapped})
+      : _title = title,
+        _onTapped = onTapped;
 
   String _formattedDate(BuildContext context) {
     final df = DateFormat.yMMM(languageCode(context));
@@ -78,10 +80,10 @@ class BillsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                bill.genre,
+                bill.genre?.name ?? "",
                 style: themeData.textTheme.subtitle1,
               ),
-              Text(bill.account, style: themeData.textTheme.caption)
+              Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
             ],
           ),
           Text(
@@ -99,7 +101,7 @@ class BillsView extends StatelessWidget {
 
   Widget _separatedItem(List<Bill> bills, BuildContext context, int index) {
     final bill = bills[index];
-    if(bill is DayBill){
+    if (bill is DayBill) {
       return const Divider(indent: 16);
     }
     return Container();

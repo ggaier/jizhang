@@ -6,6 +6,6 @@ abstract class BillAccountsEvent {}
 class AccountsLoadedEvent extends BillAccountsEvent{}
 
 class SetAccountEvent extends BillAccountsEvent{
-  final Account account;
+  final PayAccount account;
   SetAccountEvent(this.account);
 }

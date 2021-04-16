@@ -1,10 +1,16 @@
 import 'package:accountbook/utils/date_utils.dart';
+import 'package:accountbook/vo/account_entity.dart';
+import 'package:accountbook/vo/bill_category.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'bill.g.dart';
 
 enum BillType { earning, expense, summary, transfer }
 
+@JsonSerializable()
 class Bill {
   int id;
 
@@ -13,12 +19,15 @@ class Bill {
 
   //时间 in min
   int billTime;
-  String account;
-  String genre;
+  PayAccount? account;
+  BillCategory? genre;
   int amount;
   String currencySymbol;
   String remark;
   BillType billType;
+
+  Bill(this.id, this.billDate, this.billTime, this.account, this.genre, this.amount, this.currencySymbol, this.remark,
+      this.billType);
 
   Bill.name(this.id, this.billDate, this.billTime, this.account, this.genre, this.amount, this.currencySymbol,
       this.remark, this.billType);
@@ -27,8 +36,8 @@ class Bill {
       : this.id = 0,
         this.billDate = DateTime.now().millisecondsSinceEpoch,
         this.billTime = minsOfTheDay(),
-        this.account = "",
-        this.genre = "",
+        this.account = null,
+        this.genre = null,
         this.amount = 0,
         this.currencySymbol = "",
         this.remark = "",
@@ -38,8 +47,8 @@ class Bill {
     int? id,
     int? billDate,
     int? billTime,
-    String? account,
-    String? genre,
+    PayAccount? account,
+    BillCategory? genre,
     int? amount,
     String? currencySymbol,
     String? remark,
@@ -65,17 +74,21 @@ class Bill {
   DateTime get billDateDateTime {
     return DateTime.fromMillisecondsSinceEpoch(billDate);
   }
+
+  factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BillToJson(this);
 }
 
 class DayBill extends Bill {
   int earningAmount;
   int expenseAmount;
 
-  DayBill.name(int id, int billDate, String account, String genre, int amount, String currencySymbol, String remark,
-      int earningAmount, int expenseAmount)
+  DayBill.name(
+      int id, int billDate, int amount, String currencySymbol, String remark, int earningAmount, int expenseAmount)
       : this.earningAmount = earningAmount,
         this.expenseAmount = expenseAmount,
-        super.name(id, billDate, 0, account, genre, amount, currencySymbol, remark, BillType.summary);
+        super.name(id, billDate, 0, null, null, amount, currencySymbol, remark, BillType.summary);
 
   String getFmtDate(String languageCode) {
     final df = DateFormat.yMMM(languageCode);

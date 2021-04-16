@@ -1,62 +1,16 @@
+import 'package:accountbook/add_bill/add_bill_bloc.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
+import 'package:accountbook/vo/account_entity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../vo/account_entity.dart';
 import 'bill_accounts_bloc.dart';
 import 'bill_accounts_repo.dart';
 
-class BillAccountSelectorView extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _BillAccountState();
-  }
-}
-
-class _BillAccountState extends State {
-  final TextEditingController _billAccountTEC = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-    _billAccountTEC.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var bloc = context.read<BillAccountsBloc>();
-    print("init state: ${bloc.state}");
-    return BlocBuilder<BillAccountsBloc, BaseBlocState>(
-      builder: (context, state) {
-        print("state: $state");
-        final accounts = state.getData<List<Account>>();
-        final selectedAccount = accounts?.first;
-        var accountName = selectedAccount?.name;
-        if (accountName != null) {
-          _billAccountTEC.text = accountName;
-        }
-        print("name: $accountName");
-        return Row(
-          children: [
-            Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("账户")),
-            Expanded(
-              child: TextFormField(
-                decoration: const InputDecoration(hintText: "请选择您的付款账户"),
-                readOnly: true,
-                controller: _billAccountTEC ,
-                onTap: () => _showAccountsDialog(context),
-              ),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  _showAccountsDialog(BuildContext context) async {
-    final accountBloc = context.read<BillAccountsBloc>();
-    final selectedAccount = await showModalBottomSheet<Account>(
+extension BillAccountsView on AddBillBloc {
+  void showAccountsDialog(BuildContext context) async {
+    final selectedAccount = await showModalBottomSheet<PayAccount>(
       context: context,
       builder: (context) {
         return BlocProvider(
@@ -68,7 +22,7 @@ class _BillAccountState extends State {
                 bloc.add(AccountsLoadedEvent());
                 return Container();
               }
-              final accounts = state.getData<List<Account>>();
+              final accounts = state.getData<List<PayAccount>>();
               if (accounts == null || accounts.isEmpty) {
                 Navigator.pop(context);
                 return Container();
@@ -76,14 +30,16 @@ class _BillAccountState extends State {
               return Column(
                 children: [
                   AppBar(automaticallyImplyLeading: true, title: Text("账户")),
-                  ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      var account = accounts[index];
-                      return TextButton(onPressed: () => Navigator.pop(context, account), child: Text(account.name));
-                    },
-                    itemCount: accounts.length,
+                  Flexible(
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        var account = accounts[index];
+                        return TextButton(onPressed: () => Navigator.pop(context, account), child: Text(account.name));
+                      },
+                      itemCount: accounts.length,
+                    ),
                   )
                 ],
               );
@@ -93,7 +49,7 @@ class _BillAccountState extends State {
       },
     );
     if (selectedAccount != null) {
-      accountBloc.add(SetAccountEvent(selectedAccount));
+      this.setBillAccount(selectedAccount);
     }
   }
 }

@@ -1,11 +1,12 @@
-import 'package:accountbook/add_bill/add_bill_bloc.dart';
-import 'package:accountbook/bill_accounts/bill_accounts_bloc.dart';
 import 'package:accountbook/bill_accounts/bill_accounts_view.dart';
 import 'package:accountbook/bill_category/bill_categories_view.dart';
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'add_bill_bloc.dart';
 
 class AddBillView extends StatefulWidget {
   @override
@@ -19,6 +20,10 @@ class _AddBillViewState extends State {
   static const _BTN_RADIUS = 18.0;
   final TextEditingController _billDateTEC = TextEditingController();
   final TextEditingController _billTimeTEC = TextEditingController();
+  final TextEditingController _billCategoryTEC = TextEditingController();
+  final TextEditingController _billAccountTEC = TextEditingController();
+
+  AddBillBloc get _addBillBloc => context.read();
 
   @override
   void dispose() {
@@ -36,6 +41,7 @@ class _AddBillViewState extends State {
   Widget build(BuildContext context) {
     return BlocBuilder<AddBillBloc, Bill>(
       builder: (context, state) {
+        print("state : ${state.toJson()}");
         return Scaffold(
           appBar: AppBar(
             title: Text(_billTypeToTitle(state.billType)),
@@ -62,40 +68,55 @@ class _AddBillViewState extends State {
         child: Column(
           children: [
             _dateFormField(bill),
-            BillAccountSelectorView(),
-            BillCategorySelectorView(),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text("金额"),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(hintText: "输入付款金额"),
-                  ),
-                )
-              ],
-            ),
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("备注"),
-                ),
-                Expanded(
-                  child: TextFormField(
-                    decoration: const InputDecoration(hintText: "添加账单备注"),
-                  ),
-                )
-              ],
-            ),
-            Center(
-              child: ElevatedButton(child: const Text("保存"), onPressed: () {}),
-            )
+            _datePayAccountField(bill),
+            _dateCategoryFormField(bill),
+            _billAmountView(),
+            _billRemarkFormField(),
+            _saveBillBtn()
           ],
         ),
       ),
+    );
+  }
+
+  Widget _saveBillBtn() {
+    return Center(
+      child: ElevatedButton(child: const Text("保存"), onPressed: () {}),
+    );
+  }
+
+  Row _billRemarkFormField() {
+    return Row(
+      children: [
+        Padding(padding: const EdgeInsets.all(8.0), child: Text("备注")),
+        Expanded(
+          child: TextFormField(
+            decoration: const InputDecoration(hintText: "添加账单备注"),
+          ),
+        )
+      ],
+    );
+  }
+
+  Row _billAmountView() {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text("金额"),
+        ),
+        Expanded(
+          child: TextFormField(
+            decoration: const InputDecoration(hintText: "输入付款金额"),
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9.]'))],
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              print("changed input value: $value");
+              context.read<AddBillBloc>().setBillAmount(double.parse(value));
+            },
+          ),
+        )
+      ],
     );
   }
 
@@ -198,5 +219,45 @@ class _AddBillViewState extends State {
         break;
     }
     return title;
+  }
+
+  Widget _dateCategoryFormField(Bill bill) {
+    var billGenre = bill.genre?.name;
+    if (billGenre != null) {
+      _billCategoryTEC.text = billGenre;
+    }
+    return Row(
+      children: [
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("分类")),
+        Expanded(
+          child: TextFormField(
+            decoration: const InputDecoration(hintText: "请选择账单类别"),
+            readOnly: true,
+            controller: _billCategoryTEC,
+            onTap: () => _addBillBloc.showBillCategoryDialog(context),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _datePayAccountField(Bill bill) {
+    var accountName = bill.account?.name;
+    if (accountName != null) {
+      _billAccountTEC.text = accountName;
+    }
+    return Row(
+      children: [
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("账户")),
+        Expanded(
+          child: TextFormField(
+            decoration: const InputDecoration(hintText: "请选择您的付款账户"),
+            readOnly: true,
+            controller: _billAccountTEC,
+            onTap: () => _addBillBloc.showAccountsDialog(context),
+          ),
+        )
+      ],
+    );
   }
 }
