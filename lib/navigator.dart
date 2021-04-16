@@ -33,13 +33,12 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                 providers: [
                   BlocProvider(create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
                   BlocProvider(
-                    create: (context) => BillAccountsBloc(
-                      accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context),
-                    ),
+                    create: (context) =>
+                        BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
                   ),
                   BlocProvider(
                     create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
-                  )
+                  ),
                 ],
                 child: AddBillView(),
               ),

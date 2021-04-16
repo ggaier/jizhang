@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:accountbook/bill_category/bill_categories_repo.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
-import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/vo/bill_category.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -19,7 +17,7 @@ class BillCategoryBloc extends Bloc<BillCategoryEvent, BaseBlocState> {
     if (event is BillCategoryLoadedEvent) {
       yield* _mapBillCategoryLoadedToState();
     } else if (event is BillCategorySelectedEvent) {
-      yield* _mapBillCategorySelectedToState();
+      yield* _mapBillCategorySelectedToState(event);
     }
   }
 
@@ -32,8 +30,10 @@ class BillCategoryBloc extends Bloc<BillCategoryEvent, BaseBlocState> {
     }
   }
 
-  Stream<BaseBlocState> _mapBillCategorySelectedToState() async* {
-    try {} on Exception catch (e) {
+  Stream<BaseBlocState> _mapBillCategorySelectedToState(BillCategorySelectedEvent event) async* {
+    try {
+      yield ABSuccessState([event.category]);
+    } on Exception catch (e) {
       yield ABFailureState(e);
     }
   }

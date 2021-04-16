@@ -9,10 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BillCategorySelectorView extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _BillGenreSelectorState();
+  State<StatefulWidget> createState() => _BillCategorySelectorState();
 }
 
-class _BillGenreSelectorState extends State {
+class _BillCategorySelectorState extends State {
   final TextEditingController _billCategoryTEC = TextEditingController();
 
   @override
@@ -29,10 +29,10 @@ class _BillGenreSelectorState extends State {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BillCategoryBloc, BaseBlocState>(
+      bloc: context.read<BillCategoryBloc>(),
       builder: (context, state) {
-        print("state: $state");
-        final billCategory = state.getData<BillCategory>();
-        var accountName = billCategory?.name;
+        final billCategory = state.getData<List<BillCategory>>();
+        var accountName = billCategory?.first.name;
         if (accountName != null) {
           _billCategoryTEC.text = accountName;
         }

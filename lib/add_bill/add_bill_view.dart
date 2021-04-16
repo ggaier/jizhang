@@ -56,8 +56,6 @@ class _AddBillViewState extends State {
   }
 
   Widget _billForm(Bill bill) {
-    final bloc = context.read<BillAccountsBloc>();
-    print("bill account bloc: $bloc");
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
@@ -165,7 +163,6 @@ class _AddBillViewState extends State {
   }
 
   void _onBillTypeChanged(BillType? value) {
-    print("bill type: $value");
     if (value == null) return;
     context.read<AddBillBloc>().setBillType(value);
   }
@@ -175,14 +172,12 @@ class _AddBillViewState extends State {
     final dateTime = await showDatePicker(
         context: context, initialDate: nowTime, firstDate: DateTime.fromMillisecondsSinceEpoch(0), lastDate: nowTime);
     if (dateTime == null) return;
-    print("selected date time: ${dateTime.fmtDateForAddBill()}");
     BlocProvider.of<AddBillBloc>(context).setBillDate(dateTime.millisecondsSinceEpoch);
   }
 
   _showTimePicker(BuildContext context) async {
     final timeOfDay = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (timeOfDay == null) return;
-    print("time of day: ${timeOfDay.format(context)}");
     context.read<AddBillBloc>().setBillTime(timeOfDay);
   }
 

@@ -1,3 +1,4 @@
+import 'package:accountbook/bill_category/bill_categories_repo.dart';
 import 'package:accountbook/navigator.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/route_parser.dart';
@@ -52,7 +53,8 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(routeInformationParser: _routeInfoParser, routerDelegate: _routeDelegate),
           providers: [
             RepositoryProvider(create: (context) => BillsRepositoryImpl()),
-            RepositoryProvider(create: (context) => AccountsRepoImpl())
+            RepositoryProvider(create: (context) => AccountsRepoImpl()),
+            RepositoryProvider(create: (context) => BillCategoriesRepoImpl()),
           ],
         ));
   }
