@@ -127,7 +127,7 @@ class _AddBillViewState extends State {
           child: TextFormField(
             validator: (value) => value == null || value.isEmpty ? "输入付款金额" : null,
             decoration: const InputDecoration(hintText: "输入付款金额"),
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d?\.?\d{0,2}'))],
             keyboardType: TextInputType.number,
             onChanged: (value) {
               print("changed input value: $value");
