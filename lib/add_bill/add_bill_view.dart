@@ -19,6 +19,7 @@ class AddBillView extends StatefulWidget {
 class _AddBillViewState extends State {
   static const _BTN_PADDING = 36.0;
   static const _BTN_RADIUS = 18.0;
+  final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _billDateTEC = TextEditingController();
   final TextEditingController _billTimeTEC = TextEditingController();
   final TextEditingController _billCategoryTEC = TextEditingController();
@@ -72,6 +73,7 @@ class _AddBillViewState extends State {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
+        key: _formState,
         child: Column(
           children: [
             _billDateFormField(bill),
@@ -91,8 +93,11 @@ class _AddBillViewState extends State {
       child: ElevatedButton(
           child: const Text("保存"),
           onPressed: () {
-            Navigator.maybePop(context, "");
-            _addBillBloc.saveBill();
+            if (_formState.currentState?.validate() == true) {
+              _formState.currentState?.save();
+              Navigator.maybePop(context, "");
+              _addBillBloc.saveBill();
+            }
           }),
     );
   }
@@ -119,6 +124,7 @@ class _AddBillViewState extends State {
         ),
         Expanded(
           child: TextFormField(
+            validator: (value) => value == null || value.isEmpty ? "输入付款金额" : null,
             decoration: const InputDecoration(hintText: "输入付款金额"),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9.]'))],
             keyboardType: TextInputType.number,
@@ -243,6 +249,7 @@ class _AddBillViewState extends State {
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("分类")),
         Expanded(
           child: TextFormField(
+            validator: (value) => value == null || value.isEmpty ? "请选择账单类别" : null,
             decoration: const InputDecoration(hintText: "请选择账单类别"),
             readOnly: true,
             controller: _billCategoryTEC,
@@ -263,6 +270,7 @@ class _AddBillViewState extends State {
         Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("账户")),
         Expanded(
           child: TextFormField(
+            validator: (value) => value == null || value.isEmpty ? "请选择您的付款账户" : null,
             decoration: const InputDecoration(hintText: "请选择您的付款账户"),
             readOnly: true,
             controller: _billAccountTEC,
