@@ -45,7 +45,6 @@ class _AddBillViewState extends State {
     return BlocBuilder<AddBillBloc, BaseBlocState>(
       builder: (context, state) {
         if (state is ABCompleteState) {
-          Navigator.pop(context, "");
           return Container();
         }
         var bill = _addBillBloc.stateBill;
@@ -92,6 +91,7 @@ class _AddBillViewState extends State {
       child: ElevatedButton(
           child: const Text("保存"),
           onPressed: () {
+            Navigator.maybePop(context, "");
             _addBillBloc.saveBill();
           }),
     );
