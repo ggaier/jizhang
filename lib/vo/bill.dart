@@ -1,7 +1,8 @@
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/account_entity.dart';
 import 'package:accountbook/vo/bill_category.dart';
-import 'package:equatable/equatable.dart';
+import 'package:accountbook/vo/bill_entity_mixin.dart';
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -10,8 +11,10 @@ part 'bill.g.dart';
 
 enum BillType { earning, expense, summary, transfer }
 
+@Entity()
 @JsonSerializable()
-class Bill {
+class Bill with BillEntity {
+  @ignore
   int id;
 
   //日期 in ms
@@ -19,7 +22,9 @@ class Bill {
 
   //时间 in min
   int billTime;
+  @ignore
   PayAccount? account;
+  @ignore
   BillCategory? genre;
   int amount;
   String currencySymbol;
