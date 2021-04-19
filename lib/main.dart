@@ -1,4 +1,5 @@
 import 'package:accountbook/bill_category/bill_categories_repo.dart';
+import 'package:accountbook/db/abdatabase.dart';
 import 'package:accountbook/navigator.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/route_parser.dart';
@@ -8,15 +9,19 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'bill_accounts/bill_accounts_repo.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = await $FloorABDataBase.databaseBuilder("ab_database.db").build();
+  runApp(MyApp(database));
 }
 
 class MyApp extends StatelessWidget {
   final _routeDelegate = ABRouteDelegate();
   final _routeInfoParser = ABRouteInfoParser();
+  final ABDataBase _database;
 
-  // This widget is the root of your application.
+  MyApp(this._database); // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,7 +58,7 @@ class MyApp extends StatelessWidget {
           child: MaterialApp.router(routeInformationParser: _routeInfoParser, routerDelegate: _routeDelegate),
           providers: [
             RepositoryProvider(create: (context) => BillsRepositoryImpl()),
-            RepositoryProvider(create: (context) => AccountsRepoImpl()),
+            RepositoryProvider(create: (context) => AccountsRepoImpl(_database.payAccountDao)),
             RepositoryProvider(create: (context) => BillCategoriesRepoImpl()),
           ],
         ));

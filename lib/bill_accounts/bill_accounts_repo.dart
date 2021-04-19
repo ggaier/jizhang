@@ -1,3 +1,4 @@
+import 'package:accountbook/db/pay_account_dao.dart';
 import 'package:floor/floor.dart';
 
 import '../vo/account_entity.dart';
