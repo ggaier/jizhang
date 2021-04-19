@@ -1,3 +1,4 @@
+import 'package:accountbook/add_bill/digit_length_text_formatter.dart';
 import 'package:accountbook/bill_accounts/bill_accounts_view.dart';
 import 'package:accountbook/bill_category/bill_categories_view.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
@@ -126,7 +127,7 @@ class _AddBillViewState extends State {
           child: TextFormField(
             validator: (value) => value == null || value.isEmpty ? "输入付款金额" : null,
             decoration: const InputDecoration(hintText: "输入付款金额"),
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9.]'))],
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
             keyboardType: TextInputType.number,
             onChanged: (value) {
               print("changed input value: $value");
