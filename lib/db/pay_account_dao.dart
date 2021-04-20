@@ -9,10 +9,10 @@ abstract class AccountDao {
   @Query("SELECT * FROM PayAccount WHERE id = :id")
   Future<PayAccount?> findAccount(int id);
 
-  @insert
+  @Insert()
   Future<int> insertAccount(PayAccount account);
 
-  @update
+  @Update()
   Future<int> updateAccount(PayAccount account);
 
   @delete
