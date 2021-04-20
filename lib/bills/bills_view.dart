@@ -25,13 +25,12 @@ class BillsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        final bloc = BillsBloc(RepositoryProvider.of<BillsRepositoryImpl>(context));
-        bloc.getFirstPageBills();
-        return bloc;
-      },
-      child: Scaffold(
+    final bloc = context.read<BillsBloc>();
+    if (bloc.state.isEmpty) {
+      bloc.getFirstPageBills();
+    }
+    return BlocBuilder(builder: (context, state) {
+      return Scaffold(
         appBar: _buildAppBar(context),
         body: _buildBillsView(context),
         floatingActionButton: FloatingActionButton(
@@ -39,8 +38,8 @@ class BillsView extends StatelessWidget {
           tooltip: 'Increment',
           child: Icon(Icons.add),
         ), // This trailing comma makes auto-formatting nicer for build methods.
-      ),
-    );
+      );
+    });
   }
 
   AppBar _buildAppBar(BuildContext context) {

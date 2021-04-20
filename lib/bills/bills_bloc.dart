@@ -11,5 +11,8 @@ class BillsBloc extends Cubit<List<Bill>> {
     final bills = await _billsRepositoryIn.getBillsByPage(1);
     emit(bills);
   }
-  
+
+  void addNewBill(Bill bill) {
+    emit(state..add(bill));
+  }
 }

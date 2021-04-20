@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_bill/add_bill_bloc.dart';
 import 'bill_accounts/bill_accounts_bloc.dart';
 import 'bill_accounts/bill_accounts_repo.dart';
+import 'bills/bills_bloc.dart';
 import 'bills/bills_view.dart';
 
 class ABRouteDelegate extends RouterDelegate<ABRoutePath>
@@ -24,7 +25,12 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     return Navigator(
       key: _navigatorKey,
       pages: [
-        MaterialPage(child: BillsView(title: "", onTapped: _handleOnAddBillClicked), key: ValueKey("BillsView")),
+        MaterialPage(
+            child: BlocProvider(
+              create: (context) => BillsBloc(RepositoryProvider.of<BillsRepositoryImpl>(context)),
+              child: BillsView(title: "", onTapped: _handleOnAddBillClicked),
+            ),
+            key: ValueKey("BillsView")),
         if (_currentRoutePath?.isUnknown == true)
           MaterialPage(key: ValueKey("UnknownPage"), child: Center(child: Text("404 not found")))
         else if (_currentRoutePath?.isAddBill == true)
@@ -40,12 +46,11 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                     create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
                   ),
                 ],
-                child: AddBillView(),
+                child: AddBillView((bill) => context.read<BillsBloc>().addNewBill(bill)),
               ),
               key: ValueKey("AddBill"))
       ],
       onPopPage: (route, result) {
-        print("onPopPage: $route, result: ${result??""}");
         if (!route.didPop(result)) {
           return false;
         }

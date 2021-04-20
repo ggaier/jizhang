@@ -93,7 +93,7 @@ class Bill {
   }
 
   String get readableAmount {
-    return (amount / 100).toStringAsFixed(2)+"$currencySymbol";
+    return (amount / 100).toStringAsFixed(2) + "$currencySymbol";
   }
 
   factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);

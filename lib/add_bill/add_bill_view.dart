@@ -10,13 +10,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_bill_bloc.dart';
 
 class AddBillView extends StatefulWidget {
+
+  final ValueChanged<Bill> onAddBill;
+
+  AddBillView(this.onAddBill);
+
   @override
   State<StatefulWidget> createState() {
     return _AddBillViewState();
   }
 }
 
-class _AddBillViewState extends State {
+class _AddBillViewState extends State<AddBillView> {
   static const _BTN_PADDING = 36.0;
   static const _BTN_RADIUS = 18.0;
   final GlobalKey<FormState> _formState = GlobalKey();
@@ -95,8 +100,9 @@ class _AddBillViewState extends State {
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
-              Navigator.maybePop(context, "");
               _addBillBloc.saveBill();
+              widget.onAddBill(_addBillBloc.stateBill);
+              Navigator.maybePop(context, "");
             }
           }),
     );
