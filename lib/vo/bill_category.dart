@@ -9,13 +9,17 @@ class BillCategory {
   static const TABLE_NAME = "BillCategory";
 
   @PrimaryKey(autoGenerate: true)
-  int? id;
-
+  final int id;
   final String name;
 
-  BillCategory(this.name);
+  BillCategory(this.id, this.name);
 
   factory BillCategory.fromJson(Map<String, dynamic> json) => _$BillCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$BillCategoryToJson(this);
+
+  @override
+  String toString() {
+    return 'BillCategory{id: $id, name: $name}';
+  }
 }

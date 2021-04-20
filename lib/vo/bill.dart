@@ -26,7 +26,7 @@ class Bill {
   final int categoryId;
 
   @PrimaryKey(autoGenerate: true)
-  final int id;
+  final int? id;
 
   //日期 in ms
   final int billDate;
@@ -72,7 +72,7 @@ class Bill {
   }
 
   Bill.empty()
-      : this.id = 0,
+      : this.id = null,
         this.categoryId = 0,
         this.accountId = 0,
         this.billDate = DateTime.now().millisecondsSinceEpoch,
@@ -90,6 +90,10 @@ class Bill {
   @ignore
   DateTime get billDateDateTime {
     return DateTime.fromMillisecondsSinceEpoch(billDate);
+  }
+
+  String get readableAmount {
+    return (amount / 100).toStringAsFixed(2)+"$currencySymbol";
   }
 
   factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);

@@ -26,6 +26,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
   @override
   Future<List<Bill>> getBillsByPage(int page) async {
     final bills = await _billDao.getAllBills();
+    print("bills size: ${bills.length}");
     for (Bill bill in bills) {
       final categoryId = bill.categoryId;
       if (categoryId != null) {

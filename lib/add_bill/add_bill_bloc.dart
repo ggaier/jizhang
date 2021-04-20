@@ -39,11 +39,15 @@ class AddBillBloc extends Cubit<BaseBlocState> {
   }
 
   void setBillAccount(PayAccount account) {
-    emit(ABSuccessState(stateBill.copyWith(account: account)));
+    emit(ABSuccessState(stateBill.copyWith(accountId: account.id, account: account)));
   }
 
   void setBillCategory(BillCategory category) {
-    emit(ABSuccessState(stateBill.copyWith(category: category)));
+    emit(ABSuccessState(stateBill.copyWith(categoryId: category.id, category: category)));
+  }
+
+  void setBillRemark(String remark) {
+    emit(ABSuccessState(stateBill.copyWith(remark: remark)));
   }
 
   void saveBill() async {

@@ -20,4 +20,9 @@ class PayAccount {
   Map<String, dynamic> toJson() => _$PayAccountToJson(this);
 
   factory PayAccount.fromJson(Map<String, dynamic> json) => _$PayAccountFromJson(json);
+
+  @override
+  String toString() {
+    return 'PayAccount{id: $id, name: $name, balance: $balance, genre: $genre, remark: $remark}';
+  }
 }

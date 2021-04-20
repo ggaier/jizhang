@@ -12,11 +12,11 @@ class BillCategoriesRepoImpl extends BillCategoriesRepoIn {
 
   List<BillCategory> _builtInCategories() {
     return [
-      BillCategory("食品")..id = 0,
-      BillCategory("交通")..id = 1,
-      BillCategory("休闲娱乐")..id = 2,
-      BillCategory("日常用品")..id = 3,
-      BillCategory("人情往来")..id = 4,
+      BillCategory(0, "食品"),
+      BillCategory(1, "交通"),
+      BillCategory(2, "休闲娱乐"),
+      BillCategory(3, "日常用品"),
+      BillCategory(4, "人情往来"),
     ];
   }
 
@@ -30,7 +30,7 @@ class BillCategoriesRepoImpl extends BillCategoriesRepoIn {
     return categories;
   }
 
-  Future<List<BillCategory>> _insertBuiltInCategories() async{
+  Future<List<BillCategory>> _insertBuiltInCategories() async {
     final builtInCategories = _builtInCategories()
       ..forEach((element) {
         _categoryDao.insertBillCategory(element);

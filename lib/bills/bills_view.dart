@@ -91,7 +91,7 @@ class BillsView extends StatelessWidget {
             style: themeData.textTheme.caption,
           ),
           Text(
-            "${bill.amount.toString()}${bill.currencySymbol}",
+            "${bill.readableAmount}",
             style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
           )
         ],
