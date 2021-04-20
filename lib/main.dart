@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
           providers: [
             RepositoryProvider(create: (context) => BillsRepositoryImpl()),
             RepositoryProvider(create: (context) => AccountsRepoImpl(_database.payAccountDao)),
-            RepositoryProvider(create: (context) => BillCategoriesRepoImpl()),
+            RepositoryProvider(create: (context) => BillCategoriesRepoImpl(_database.billCategoryDao)),
           ],
         ));
   }
