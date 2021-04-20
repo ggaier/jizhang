@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:accountbook/db/bill_category_dao.dart';
+import 'package:accountbook/db/bill_dao.dart';
+import 'package:accountbook/db/pay_account_dao.dart';
 import 'package:accountbook/utils/date_utils.dart';
 import 'package:accountbook/vo/account_entity.dart';
 import 'package:accountbook/vo/bill.dart';
@@ -9,33 +12,38 @@ import 'package:flutter/material.dart';
 
 abstract class BillsRepositoryIn {
   Future<List<Bill>> getBillsByPage(int page);
-  Future<void> saveBill(Bill bill);
+
+  Future<bool> saveBill(Bill bill);
 }
 
 class BillsRepositoryImpl implements BillsRepositoryIn {
+  final BillDao _billDao;
+  final BillCategoryDao _billCategoryDao;
+  final AccountDao _payAccountDao;
+
+  BillsRepositoryImpl(this._billDao, this._billCategoryDao, this._payAccountDao);
+
   @override
   Future<List<Bill>> getBillsByPage(int page) async {
-    return Future.delayed(Duration(seconds: 2), () {
-      return List<Bill>.generate(100, (index) {
-        if (index % 3 == 0) return DayBill.name(index, DateTime.now().millisecondsSinceEpoch, 0, "¥", "", 10000, 100);
-        return Bill.name(
-            index,
-            DateTime.now().millisecondsSinceEpoch,
-            minsOfTheDay(),
-            PayAccount.name(index, "随机生成账户: ${index + 1}", 0, "", ""),
-            BillCategory("账单类型$index"),
-            Random.secure().nextInt(100),
-            "¥",
-            "随机生成备注",
-            BillType.expense);
-      });
-    });
+    final bills = await _billDao.getAllBills();
+    for (Bill bill in bills) {
+      final categoryId = bill.categoryId;
+      if (categoryId != null) {
+        final category = await _billCategoryDao.findBillCategory(categoryId);
+        bill.category = category;
+      }
+      final payAccountId = bill.accountId;
+      if (payAccountId != null) {
+        final payAccount = await _payAccountDao.findAccount(payAccountId);
+        bill.account = payAccount;
+      }
+    }
+    return bills;
   }
 
   @override
-  Future<void> saveBill(Bill bill) {
-    return Future.delayed(Duration(milliseconds: 50), (){
-        print("save success");
-    });
+  Future<bool> saveBill(Bill bill) async {
+    await _billDao.insertBill(bill);
+    return true;
   }
 }

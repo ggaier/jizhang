@@ -57,7 +57,9 @@ class MyApp extends StatelessWidget {
         home: MultiRepositoryProvider(
           child: MaterialApp.router(routeInformationParser: _routeInfoParser, routerDelegate: _routeDelegate),
           providers: [
-            RepositoryProvider(create: (context) => BillsRepositoryImpl()),
+            RepositoryProvider(
+                create: (context) =>
+                    BillsRepositoryImpl(_database.billDao, _database.billCategoryDao, _database.payAccountDao)),
             RepositoryProvider(create: (context) => AccountsRepoImpl(_database.payAccountDao)),
             RepositoryProvider(create: (context) => BillCategoriesRepoImpl(_database.billCategoryDao)),
           ],

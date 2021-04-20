@@ -24,30 +24,26 @@ class AccountsRepoImpl extends AccountsRepoIn {
 
   @override
   Future<List<PayAccount>> getAllAccounts() async {
-    return Future(() async {
-      final accounts = await _accountDao.getAllPayAccounts();
-      if (accounts.isEmpty) {
-        final builtInAccounts = _builtInAccounts()
-          ..forEach((element) {
-            _accountDao.insertAccount(element);
-          });
-        return builtInAccounts;
+    final accounts = await _accountDao.getAllPayAccounts();
+    if (accounts.isEmpty) {
+      final builtInAccounts = _builtInAccounts();
+      for (PayAccount account in builtInAccounts) {
+        await _accountDao.insertAccount(account);
       }
-      return accounts;
-    });
+      return builtInAccounts;
+    }
+    return accounts;
   }
 
   @override
-  Future<bool> saveOrUpdateAccount(PayAccount account) {
-    return Future(() async {
-      final foundAccount = await _accountDao.findAccount(account.id);
-      var effectRow = 0;
-      if (foundAccount != null) {
-        effectRow = await _accountDao.updateAccount(account);
-      } else {
-        effectRow = await _accountDao.insertAccount(account);
-      }
-      return effectRow == 1;
-    });
+  Future<bool> saveOrUpdateAccount(PayAccount account) async {
+    final foundAccount = await _accountDao.findAccount(account.id);
+    var effectRow = 0;
+    if (foundAccount != null) {
+      effectRow = await _accountDao.updateAccount(account);
+    } else {
+      effectRow = await _accountDao.insertAccount(account);
+    }
+    return effectRow == 1;
   }
 }

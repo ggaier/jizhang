@@ -22,18 +22,16 @@ class BillCategoriesRepoImpl extends BillCategoriesRepoIn {
 
   @override
   Future<List<BillCategory>> getAllBillCategory() async {
-    return Future(() async {
-      final categories = await _categoryDao.getAllBillCategories();
-      print("categories: $categories");
-      if (categories.isEmpty) {
-        return _insertBuiltInCategories();
-      }
-      return categories;
-    });
+    final categories = await _categoryDao.getAllBillCategories();
+    print("categories: $categories");
+    if (categories.isEmpty) {
+      return await _insertBuiltInCategories();
+    }
+    return categories;
   }
 
-  List<BillCategory> _insertBuiltInCategories() {
-     final builtInCategories = _builtInCategories()
+  Future<List<BillCategory>> _insertBuiltInCategories() async{
+    final builtInCategories = _builtInCategories()
       ..forEach((element) {
         _categoryDao.insertBillCategory(element);
       });

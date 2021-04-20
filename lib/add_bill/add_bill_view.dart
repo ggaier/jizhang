@@ -240,7 +240,7 @@ class _AddBillViewState extends State {
   }
 
   Widget _dateCategoryFormField(Bill bill) {
-    var billGenre = bill.genre?.name;
+    var billGenre = bill.category?.name;
     if (billGenre != null) {
       _billCategoryTEC.text = billGenre;
     }

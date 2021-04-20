@@ -67,7 +67,7 @@ class BillsView extends StatelessWidget {
   Widget _billItem(List<Bill> bills, BuildContext context, int index) {
     final bill = bills[index];
     var themeData = Theme.of(context);
-    if (bill is DayBill) {
+    if (bill is CompositionBill) {
       return _buildDayBillView(bill, context);
     }
     return Padding(
@@ -80,7 +80,7 @@ class BillsView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                bill.genre?.name ?? "",
+                bill.category?.name ?? "",
                 style: themeData.textTheme.subtitle1,
               ),
               Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
@@ -101,7 +101,7 @@ class BillsView extends StatelessWidget {
 
   Widget _separatedItem(List<Bill> bills, BuildContext context, int index) {
     final bill = bills[index];
-    if (bill is DayBill) {
+    if (bill is CompositionBill) {
       return const Divider(indent: 16);
     }
     return Container();
@@ -122,7 +122,7 @@ class BillsView extends StatelessWidget {
     return false;
   }
 
-  Widget _buildDayBillView(DayBill bill, BuildContext context) {
+  Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
     var themeData = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
