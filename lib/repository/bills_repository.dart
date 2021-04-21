@@ -26,19 +26,13 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
   @override
   Future<List<Bill>> getBillsByPage(int page) async {
     final bills = await _billDao.getAllBills();
-    print("bills size: ${bills.length}");
     for (Bill bill in bills) {
-      print("bill date: ${bill.billDate}, ${bill.billTime}");
       final categoryId = bill.categoryId;
-      if (categoryId != null) {
-        final category = await _billCategoryDao.findBillCategory(categoryId);
-        bill.category = category;
-      }
+      final category = await _billCategoryDao.findBillCategory(categoryId);
+      bill.category = category;
       final payAccountId = bill.accountId;
-      if (payAccountId != null) {
-        final payAccount = await _payAccountDao.findAccount(payAccountId);
-        bill.account = payAccount;
-      }
+      final payAccount = await _payAccountDao.findAccount(payAccountId);
+      bill.account = payAccount;
     }
     return bills;
   }
