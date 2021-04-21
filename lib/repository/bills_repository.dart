@@ -28,6 +28,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
     final bills = await _billDao.getAllBills();
     print("bills size: ${bills.length}");
     for (Bill bill in bills) {
+      print("bill date: ${bill.billDate}, ${bill.billTime}");
       final categoryId = bill.categoryId;
       if (categoryId != null) {
         final category = await _billCategoryDao.findBillCategory(categoryId);

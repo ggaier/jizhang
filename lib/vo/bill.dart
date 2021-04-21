@@ -16,6 +16,8 @@ enum BillType { earning, expense, summary, transfer }
 @Entity(tableName: Bill.TABLE_NAME)
 class Bill {
   static const TABLE_NAME = "Bill";
+  static const COLUMN_BILL_DATE = "billDate";
+  static const COLUMN_BILL_TIME = "billTime";
   static const String COLUMN_ACCOUNT_ID = "account_id";
   static const String COLUMN_CATEGORY_ID = "category_id";
 

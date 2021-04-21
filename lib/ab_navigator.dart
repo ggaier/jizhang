@@ -22,7 +22,6 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
 
   @override
   Widget build(BuildContext context) {
-    print("navigator context: ${context.hashCode}");
     return Navigator(
       key: _navigatorKey,
       pages: [
@@ -44,7 +43,6 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                 ],
                 child: AddBillView((bill) {
                   final bloc = context.read<BillsBloc>();
-                  print("add bill onSave bloc: ${bloc.hashCode} ");
                   bloc.addNewBill(bill);
                 }),
               ),

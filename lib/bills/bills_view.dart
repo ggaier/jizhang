@@ -56,7 +56,6 @@ class BillsView extends StatelessWidget {
     }
     return BlocBuilder<BillsBloc, BaseBlocState>(builder: (context, state) {
       final bills = state.getData<List<Bill>>() ?? List.empty();
-      print("bills view state: ${state.runtimeType}, ${bills.length}");
       return ListView.separated(
         itemCount: bills.length,
         itemBuilder: (context, index) => _billItem(bills, context, index),
