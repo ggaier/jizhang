@@ -74,23 +74,21 @@ class BillsView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                bill.category?.name ?? "",
-                style: themeData.textTheme.subtitle1,
-              ),
-              Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
-            ],
+          Container(
+            width: 100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(bill.category?.name ?? "", style: themeData.textTheme.subtitle1),
+                Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
+              ],
+            ),
           ),
-          Text(
-            bill.remark,
-            style: themeData.textTheme.caption,
-          ),
+          SizedBox(width: 24),
+          Text(bill.remark, style: themeData.textTheme.caption),
+          Spacer(),
           Text(
             "${bill.readableAmount}",
             style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
