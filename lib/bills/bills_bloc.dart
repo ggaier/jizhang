@@ -9,8 +9,8 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
 
   BillsBloc(this._billsRepositoryIn) : super(ABInitialState());
 
-  void getFirstPageBills() {
-    add(BillsLoadedEvent());
+  void getPagedBills(int page) {
+    add(BillsLoadedEvent(page));
   }
 
   void addNewBill(Bill bill) {
@@ -21,15 +21,15 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
   @override
   Stream<BaseBlocState> mapEventToState(BillsBlocEvent event) async* {
     if (event is BillsLoadedEvent) {
-      yield* _mapBillsLoadedEventToState();
+      yield* _mapBillsLoadedEventToState(event);
     } else if (event is BillAddedEvent) {
       yield* _mapBillAddedEventToState(event);
     }
   }
 
-  Stream<BaseBlocState> _mapBillsLoadedEventToState() async* {
+  Stream<BaseBlocState> _mapBillsLoadedEventToState(BillsLoadedEvent event) async* {
     try {
-      final bills = await _billsRepositoryIn.getBillsByPage(1);
+      final bills = await _billsRepositoryIn.getBillsByPage(event.page);
       yield ABSuccessState(bills);
     } on Exception catch (e) {
       print(e);

@@ -4,7 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 abstract class BillsBlocEvent {}
 
-class BillsLoadedEvent extends BillsBlocEvent {}
+class BillsLoadedEvent extends BillsBlocEvent {
+  final int page;
+  BillsLoadedEvent(this.page);
+}
 
 class BillAddedEvent extends BillsBlocEvent {
   final Bill addedBill;
