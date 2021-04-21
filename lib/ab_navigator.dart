@@ -22,29 +22,26 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
 
   @override
   Widget build(BuildContext context) {
+    print("navigator context: ${context.hashCode}");
     return Navigator(
       key: _navigatorKey,
       pages: [
-        MaterialPage(
-            child: BlocProvider(
-              create: (context) => BillsBloc(RepositoryProvider.of<BillsRepositoryImpl>(context)),
-              child: BillsView(title: "", onTapped: _handleOnAddBillClicked),
-            ),
-            key: ValueKey("BillsView")),
+        MaterialPage(child: BillsView(title: "", onTapped: _handleOnAddBillClicked), key: ValueKey("BillsView")),
         if (_currentRoutePath?.isUnknown == true)
           MaterialPage(key: ValueKey("UnknownPage"), child: Center(child: Text("404 not found")))
         else if (_currentRoutePath?.isAddBill == true)
           MaterialPage(
               child: MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
+                  BlocProvider(
+                      create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
                   BlocProvider(
                     create: (context) =>
                         BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
                   ),
                   BlocProvider(
                     create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
-                  ),
+                  )
                 ],
                 child: AddBillView((bill) => context.read<BillsBloc>().addNewBill(bill)),
               ),

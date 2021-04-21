@@ -25,25 +25,20 @@ class BillsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<BillsBloc>();
-    if (bloc.state.isEmpty) {
-      bloc.getFirstPageBills();
-    }
-    return BlocBuilder(builder: (context, state) {
-      return Scaffold(
-        appBar: _buildAppBar(context),
-        body: _buildBillsView(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _onTapped,
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-      );
-    });
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: _buildBillsView(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onTapped,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      elevation: 0,
       leadingWidth: 96,
       leading: Center(
           child: TextButton(
@@ -53,6 +48,11 @@ class BillsView extends StatelessWidget {
   }
 
   Widget _buildBillsView(BuildContext context) {
+    final bloc = context.read<BillsBloc>();
+    print("bills bloc: $bloc, ${context.hashCode}");
+    if (bloc.state.isEmpty) {
+      bloc.getFirstPageBills();
+    }
     return BlocBuilder<BillsBloc, List<Bill>>(builder: (context, state) {
       final bills = state;
       return ListView.separated(

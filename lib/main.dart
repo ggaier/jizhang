@@ -1,6 +1,7 @@
 import 'package:accountbook/bill_category/bill_categories_repo.dart';
+import 'package:accountbook/bills/bills_bloc.dart';
 import 'package:accountbook/db/abdatabase.dart';
-import 'package:accountbook/navigator.dart';
+import 'package:accountbook/ab_navigator.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/route_parser.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,10 @@ class MyApp extends StatelessWidget {
   final _routeDelegate = ABRouteDelegate();
   final _routeInfoParser = ABRouteInfoParser();
   final ABDataBase _database;
+  final BillsRepositoryImpl _billsRepository;
 
-  MyApp(this._database); // This widget is the root of your application.
+  MyApp(this._database)
+      :_billsRepository = BillsRepositoryImpl(_database.billDao, _database.billCategoryDao, _database.payAccountDao);
 
   @override
   Widget build(BuildContext context) {
@@ -54,15 +57,16 @@ class MyApp extends StatelessWidget {
           hintColor: Color.fromARGB(255, 238, 238, 238),
           accentColor: Color.fromARGB(255, 0, 173, 181),
         ),
-        home: MultiRepositoryProvider(
-          child: MaterialApp.router(routeInformationParser: _routeInfoParser, routerDelegate: _routeDelegate),
-          providers: [
-            RepositoryProvider(
-                create: (context) =>
-                    BillsRepositoryImpl(_database.billDao, _database.billCategoryDao, _database.payAccountDao)),
-            RepositoryProvider(create: (context) => AccountsRepoImpl(_database.payAccountDao)),
-            RepositoryProvider(create: (context) => BillCategoriesRepoImpl(_database.billCategoryDao)),
-          ],
+        home: BlocProvider(
+          create: (context) => BillsBloc(_billsRepository),
+          child: MultiRepositoryProvider(
+            child: MaterialApp.router(routeInformationParser: _routeInfoParser, routerDelegate: _routeDelegate),
+            providers: [
+              RepositoryProvider<BillsRepositoryImpl>(create: (context) => _billsRepository),
+              RepositoryProvider(create: (context) => AccountsRepoImpl(_database.payAccountDao)),
+              RepositoryProvider(create: (context) => BillCategoriesRepoImpl(_database.billCategoryDao)),
+            ],
+          ),
         ));
   }
 }

@@ -101,7 +101,10 @@ class _AddBillViewState extends State<AddBillView> {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
               _addBillBloc.saveBill();
-              widget.onAddBill(_addBillBloc.stateBill);
+              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                print("onAddBill");
+                widget.onAddBill(_addBillBloc.stateBill);
+              });
               Navigator.maybePop(context, "");
             }
           }),
