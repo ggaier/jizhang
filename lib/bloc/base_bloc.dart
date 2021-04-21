@@ -1,10 +1,6 @@
-import 'package:equatable/equatable.dart';
-
-abstract class BaseBlocState extends Equatable {
+//是否需要实现Equatable还需要再确认.
+abstract class BaseBlocState {
   const BaseBlocState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class ABInitialState extends BaseBlocState {}
@@ -19,9 +15,6 @@ class ABSuccessState<Item> extends BaseBlocState {
   final Item? data;
 
   ABSuccessState([this.data]);
-
-  @override
-  List<Object?> get props => [data];
 
   @override
   String toString() {

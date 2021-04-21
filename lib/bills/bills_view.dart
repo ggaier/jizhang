@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:accountbook/bills/bills_bloc.dart';
+import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
@@ -49,12 +50,13 @@ class BillsView extends StatelessWidget {
 
   Widget _buildBillsView(BuildContext context) {
     final bloc = context.read<BillsBloc>();
-    print("bills bloc: $bloc, ${context.hashCode}");
-    if (bloc.state.isEmpty) {
+    print("bills bloc: ${bloc.hashCode}, ${context.hashCode}");
+    if (bloc.state.isInitial) {
       bloc.getFirstPageBills();
     }
-    return BlocBuilder<BillsBloc, List<Bill>>(builder: (context, state) {
-      final bills = state;
+    return BlocBuilder<BillsBloc, BaseBlocState>(builder: (context, state) {
+      final bills = state.getData<List<Bill>>() ?? List.empty();
+      print("bills view state: ${state.runtimeType}, ${bills.length}");
       return ListView.separated(
         itemCount: bills.length,
         itemBuilder: (context, index) => _billItem(bills, context, index),

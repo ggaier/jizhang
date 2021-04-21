@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_bill_bloc.dart';
 
 class AddBillView extends StatefulWidget {
-
   final ValueChanged<Bill> onAddBill;
 
   AddBillView(this.onAddBill);
@@ -54,7 +53,6 @@ class _AddBillViewState extends State<AddBillView> {
           return Container();
         }
         var bill = _addBillBloc.stateBill;
-        print("state : ${bill.toJson()}");
         return Scaffold(
           appBar: AppBar(
             title: Text(_billTypeToTitle(bill.billType)),
@@ -100,11 +98,8 @@ class _AddBillViewState extends State<AddBillView> {
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
+              widget.onAddBill(_addBillBloc.stateBill);
               _addBillBloc.saveBill();
-              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                print("onAddBill");
-                widget.onAddBill(_addBillBloc.stateBill);
-              });
               Navigator.maybePop(context, "");
             }
           }),
@@ -141,7 +136,6 @@ class _AddBillViewState extends State<AddBillView> {
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
             keyboardType: TextInputType.number,
             onChanged: (value) {
-              print("changed input value: $value");
               context.read<AddBillBloc>().setBillAmount(double.parse(value));
             },
           ),

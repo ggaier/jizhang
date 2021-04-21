@@ -33,8 +33,7 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
           MaterialPage(
               child: MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                      create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
+                  BlocProvider(create: (context) => AddBillBloc(RepositoryProvider.of<BillsRepositoryImpl>(context))),
                   BlocProvider(
                     create: (context) =>
                         BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
@@ -43,7 +42,11 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                     create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
                   )
                 ],
-                child: AddBillView((bill) => context.read<BillsBloc>().addNewBill(bill)),
+                child: AddBillView((bill) {
+                  final bloc = context.read<BillsBloc>();
+                  print("add bill onSave bloc: ${bloc.hashCode} ");
+                  bloc.addNewBill(bill);
+                }),
               ),
               key: ValueKey("AddBill"))
       ],
