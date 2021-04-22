@@ -19,12 +19,18 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
     add(BillAddedEvent(bill));
   }
 
+  void updateExistBill(Bill bill) {
+    add(BillUpdateEvent(bill));
+  }
+
   @override
   Stream<BaseBlocState> mapEventToState(BillsBlocEvent event) async* {
     if (event is BillsLoadedEvent) {
       yield* _mapBillsLoadedEventToState(event);
     } else if (event is BillAddedEvent) {
       yield* _mapBillAddedEventToState(event);
+    } else if (event is BillUpdateEvent) {
+      yield* _mapBillUpdateEventToState(event);
     }
   }
 
@@ -47,5 +53,19 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
     } on Exception catch (e) {
       print(e);
     }
+  }
+
+  Stream<BaseBlocState> _mapBillUpdateEventToState(BillUpdateEvent event) async* {
+    try {
+      if (state is ABSuccessState) {
+        final bills = state.getData<List<Bill>>();
+        if (bills != null) {
+          final index = bills.indexWhere((element) => element.id == event.updatedBill.id);
+          bills.removeAt(index);
+          bills.insert(index, event.updatedBill);
+          yield ABSuccessState(bills);
+        }
+      }
+    } on Exception catch (e) {}
   }
 }

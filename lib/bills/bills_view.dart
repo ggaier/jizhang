@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 
 class BillsView extends StatefulWidget {
   final String _title;
   final DateTime? _date = DateTime.now().toLocal();
-  final VoidCallback _onTapped;
+  final ValueChanged<Bill?> _onTapped;
 
-  BillsView({required String title, required VoidCallback onTapped})
+  BillsView({required String title, required ValueChanged<Bill?> onTapped})
       : _title = title,
         _onTapped = onTapped;
 
@@ -47,7 +48,7 @@ class _BillsViewState extends State<BillsView> {
       appBar: _buildAppBar(context),
       body: _buildBillsView(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: widget._onTapped,
+        onPressed: () => widget._onTapped(null),
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -92,29 +93,32 @@ class _BillsViewState extends State<BillsView> {
     if (bill is CompositionBill) {
       return _buildDayBillView(bill, context);
     }
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(bill.category?.name ?? "", style: themeData.textTheme.subtitle1),
-                Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
-              ],
+    return InkWell(
+      onTap: () => widget._onTapped(bill),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(bill.category?.name ?? "", style: themeData.textTheme.subtitle1),
+                  Text(bill.account?.name ?? "", style: themeData.textTheme.caption)
+                ],
+              ),
             ),
-          ),
-          SizedBox(width: 24),
-          Text(bill.remark, style: themeData.textTheme.caption),
-          Spacer(),
-          Text(
-            "${bill.readableAmount}",
-            style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
-          )
-        ],
+            SizedBox(width: 24),
+            Text(bill.remark, style: themeData.textTheme.caption),
+            Spacer(),
+            Text(
+              "${bill.readableAmount}",
+              style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
+            )
+          ],
+        ),
       ),
     );
   }

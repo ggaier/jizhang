@@ -3,8 +3,10 @@ import 'package:accountbook/app_route_path.dart';
 import 'package:accountbook/bill_category/bill_categories_repo.dart';
 import 'package:accountbook/bill_category/bill_category_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
+import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tuple/tuple.dart';
 
 import 'add_bill/add_bill_bloc.dart';
 import 'bill_accounts/bill_accounts_bloc.dart';
@@ -25,7 +27,10 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     return Navigator(
       key: _navigatorKey,
       pages: [
-        MaterialPage(child: BillsView(title: "", onTapped: _handleOnAddBillClicked), key: ValueKey("BillsView")),
+        MaterialPage(
+          child: BillsView(title: "", onTapped: (value) => _handleOnAddBillClicked(context, value)),
+          key: ValueKey("BillsView"),
+        ),
         if (_currentRoutePath?.isUnknown == true)
           MaterialPage(key: ValueKey("UnknownPage"), child: Center(child: Text("404 not found")))
         else if (_currentRoutePath?.isAddBill == true)
@@ -41,9 +46,13 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
                     create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
                   )
                 ],
-                child: AddBillView((bill) {
+                child: AddBillView((billTuple) {
                   final bloc = context.read<BillsBloc>();
-                  bloc.addNewBill(bill);
+                  if (!billTuple.item2) {
+                    bloc.addNewBill(billTuple.item1);
+                  } else {
+                    bloc.updateExistBill(billTuple.item1);
+                  }
                 }),
               ),
               key: ValueKey("AddBill"))
@@ -64,7 +73,11 @@ class ABRouteDelegate extends RouterDelegate<ABRoutePath>
     //
   }
 
-  void _handleOnAddBillClicked() {
+  void _handleOnAddBillClicked(BuildContext context, Bill? bill) {
+    if (bill != null) {
+      final bloc = context.read<AddBillBloc>();
+      bloc.setInitBill(bill);
+    }
     _currentRoutePath = ABRoutePath.add();
     notifyListeners();
   }

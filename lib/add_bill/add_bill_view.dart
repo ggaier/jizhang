@@ -6,13 +6,15 @@ import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tuple/tuple.dart';
 
 import 'add_bill_bloc.dart';
 
 class AddBillView extends StatefulWidget {
-  final ValueChanged<Bill> onAddBill;
+  final ValueChanged<Tuple2<Bill, bool>> onAddBill;
+  final bool isUpdate;
 
-  AddBillView(this.onAddBill);
+  AddBillView(this.onAddBill, {bool? isUpdate}) : this.isUpdate = isUpdate ?? false;
 
   @override
   State<StatefulWidget> createState() {
@@ -98,7 +100,7 @@ class _AddBillViewState extends State<AddBillView> {
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
-              widget.onAddBill(_addBillBloc.stateBill);
+              widget.onAddBill(Tuple2(_addBillBloc.stateBill, false));
               _addBillBloc.saveBill();
               Navigator.maybePop(context, "");
             }

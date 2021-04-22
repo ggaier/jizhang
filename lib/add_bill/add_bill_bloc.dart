@@ -20,6 +20,10 @@ class AddBillBloc extends Cubit<BaseBlocState> {
     return bill;
   }
 
+  void setInitBill(Bill bill){
+    emit(ABSuccessState(bill));
+  }
+
   void setBillDate(int date) {
     if (state is ABSuccessState) {
       emit(ABSuccessState(stateBill.copyWith(billDate: date)));
