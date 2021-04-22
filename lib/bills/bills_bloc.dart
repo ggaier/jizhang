@@ -5,6 +5,7 @@ import 'package:accountbook/vo/bill.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
+  static const PAGE_SIZE = 50;
   final BillsRepositoryIn _billsRepositoryIn;
 
   BillsBloc(this._billsRepositoryIn) : super(ABInitialState());
@@ -29,7 +30,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
 
   Stream<BaseBlocState> _mapBillsLoadedEventToState(BillsLoadedEvent event) async* {
     try {
-      final bills = await _billsRepositoryIn.getBillsByPage(event.page);
+      final bills = await _billsRepositoryIn.getBillsByPage(event.page, PAGE_SIZE);
       yield ABSuccessState(bills);
     } on Exception catch (e) {
       print(e);

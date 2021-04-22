@@ -25,7 +25,7 @@ class BillsView extends StatefulWidget {
 }
 
 class _BillsViewState extends State<BillsView> {
-  static const _pageSize = 20;
+  static const _pageSize = BillsBloc.PAGE_SIZE;
   final PagingController<int, Bill> _pagingController = PagingController(firstPageKey: 1);
 
   @override

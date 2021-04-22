@@ -11,7 +11,7 @@ import 'package:accountbook/vo/bill_category.dart';
 import 'package:flutter/material.dart';
 
 abstract class BillsRepositoryIn {
-  Future<List<Bill>> getBillsByPage(int page);
+  Future<List<Bill>> getBillsByPage(int page, int pageSize);
 
   Future<bool> saveBill(Bill bill);
 }
@@ -24,8 +24,11 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
   BillsRepositoryImpl(this._billDao, this._billCategoryDao, this._payAccountDao);
 
   @override
-  Future<List<Bill>> getBillsByPage(int page) async {
-    final bills = await _billDao.getAllBills();
+  Future<List<Bill>> getBillsByPage(int page, int pageSize) async {
+    final revisedPage = page <= 0 ? 1 : page;
+    final offset = (revisedPage - 1) * pageSize;
+    final bills = await _billDao.findBillsByPage(pageSize, offset);
+    print("revised page: $revisedPage, offset: $offset, bills length: ${bills.length}");
     for (Bill bill in bills) {
       final categoryId = bill.categoryId;
       final category = await _billCategoryDao.findBillCategory(categoryId);
