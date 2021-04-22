@@ -42,7 +42,16 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
 
   @override
   Future<bool> saveBill(Bill bill) async {
-    await _billDao.insertBill(bill);
-    return true;
+    var billId = bill.id;
+    int row = 0;
+    if (billId != null) {
+      final foundBill = await _billDao.findBillById(billId);
+      if (foundBill != null) {
+        row = await _billDao.updateBill(bill);
+      }
+    } else {
+      row = await _billDao.insertBill(bill);
+    }
+    return row == 1;
   }
 }

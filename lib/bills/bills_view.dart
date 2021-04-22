@@ -29,10 +29,17 @@ class _BillsViewState extends State<BillsView> {
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
+      print("page key: $pageKey");
       final bloc = context.read<BillsBloc>();
       bloc.getPagedBills(pageKey);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pagingController.dispose();
   }
 
   String _formattedDate(BuildContext context) {
@@ -70,12 +77,19 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         final bills = state.getData<List<Bill>>();
-        if (bills == null) return;
-        if (bills.length < _pageSize) {
-          _pagingController.appendLastPage(bills);
+        print("state: $state");
+        if (state is ABUpdatedState) {
+          _pagingController.itemList = bills;
         } else {
-          final nextPage = ((_pagingController.value.itemList?.length ?? 0 + bills.length) ~/ _pageSize) + 1;
-          _pagingController.appendPage(bills, nextPage);
+          if (bills == null) return;
+          if (bills.length < _pageSize) {
+            _pagingController.appendLastPage(bills);
+          } else {
+            final currentLength = _pagingController.value.itemList?.length ?? 0;
+            final newLength = bills.length;
+            final nextPage = ((currentLength + newLength) ~/ _pageSize) + 1;
+            _pagingController.appendPage(bills, nextPage);
+          }
         }
       },
       child: PagedListView.separated(

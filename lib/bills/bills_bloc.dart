@@ -15,7 +15,6 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
   }
 
   void addNewBill(Bill bill) {
-    print("add new bill: ${bill.toJson()}");
     add(BillAddedEvent(bill));
   }
 
@@ -62,8 +61,9 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
         if (bills != null) {
           final index = bills.indexWhere((element) => element.id == event.updatedBill.id);
           bills.removeAt(index);
+          print("update index: $index, ${event.updatedBill.toJson()}");
           bills.insert(index, event.updatedBill);
-          yield ABSuccessState(bills);
+          yield ABUpdatedState(bills);
         }
       }
     } on Exception catch (e) {}

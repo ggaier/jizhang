@@ -12,7 +12,7 @@ class AddBillBloc extends Cubit<BaseBlocState> {
   final BillsRepositoryIn _billsRepositoryIn;
 
   Bill get stateBill {
-    var bill = state.getData();
+    var bill = state.getData<Bill>();
     if (bill == null) {
       bill = Bill.empty();
       emit(ABSuccessState(bill));

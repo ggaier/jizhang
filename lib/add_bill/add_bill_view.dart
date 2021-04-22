@@ -12,9 +12,13 @@ import 'add_bill_bloc.dart';
 
 class AddBillView extends StatefulWidget {
   final ValueChanged<Tuple2<Bill, bool>> onAddBill;
-  final bool isUpdate;
+  final Bill? initBill;
 
-  AddBillView(this.onAddBill, {bool? isUpdate}) : this.isUpdate = isUpdate ?? false;
+  bool get isUpdate {
+    return initBill != null;
+  }
+
+  AddBillView({required this.onAddBill, Bill? updatingBill}) : this.initBill = updatingBill;
 
   @override
   State<StatefulWidget> createState() {
@@ -33,6 +37,10 @@ class _AddBillViewState extends State<AddBillView> {
 
   AddBillBloc get _addBillBloc => context.read();
 
+  TextStyle? get _billLabelStyle {
+    return Theme.of(context).textTheme.caption;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -45,6 +53,10 @@ class _AddBillViewState extends State<AddBillView> {
   @override
   void initState() {
     super.initState();
+    var initBill = widget.initBill;
+    if (initBill != null) {
+      _addBillBloc.setInitBill(initBill);
+    }
   }
 
   @override
@@ -55,9 +67,10 @@ class _AddBillViewState extends State<AddBillView> {
           return Container();
         }
         var bill = _addBillBloc.stateBill;
+        print("init bill: ${bill.toJson()}");
         return Scaffold(
           appBar: AppBar(
-            title: Text(_billTypeToTitle(bill.billType)),
+            title: Text("${widget.isUpdate ? "编辑" : ""}${_billTypeToTitle(bill.billType)}"),
           ),
           body: _buildAddBillBody(bill),
         );
@@ -84,8 +97,8 @@ class _AddBillViewState extends State<AddBillView> {
             _billDateFormField(bill),
             _datePayAccountField(bill),
             _dateCategoryFormField(bill),
-            _billAmountView(),
-            _billRemarkFormField(),
+            _billAmountView(bill),
+            _billRemarkFormField(bill),
             _saveBillBtn()
           ],
         ),
@@ -100,7 +113,7 @@ class _AddBillViewState extends State<AddBillView> {
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
-              widget.onAddBill(Tuple2(_addBillBloc.stateBill, false));
+              widget.onAddBill(Tuple2(_addBillBloc.stateBill, widget.isUpdate));
               _addBillBloc.saveBill();
               Navigator.maybePop(context, "");
             }
@@ -108,13 +121,14 @@ class _AddBillViewState extends State<AddBillView> {
     );
   }
 
-  Row _billRemarkFormField() {
+  Row _billRemarkFormField(Bill bill) {
     return Row(
       children: [
-        Padding(padding: const EdgeInsets.all(8.0), child: Text("备注")),
+        Padding(padding: const EdgeInsets.all(8.0), child: Text("备注", style: _billLabelStyle)),
         Expanded(
           child: TextFormField(
             decoration: const InputDecoration(hintText: "添加账单备注"),
+            initialValue: bill.remark.isEmpty ? null : bill.remark,
             onChanged: (value) {
               context.read<AddBillBloc>().setBillRemark(value);
             },
@@ -124,17 +138,15 @@ class _AddBillViewState extends State<AddBillView> {
     );
   }
 
-  Row _billAmountView() {
+  Row _billAmountView(Bill bill) {
     return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text("金额"),
-        ),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("金额", style: _billLabelStyle)),
         Expanded(
           child: TextFormField(
             validator: (value) => value == null || value.isEmpty ? "输入付款金额" : null,
             decoration: const InputDecoration(hintText: "输入付款金额"),
+            initialValue: bill.amount > 0 ? bill.readableAmount : null,
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))],
             keyboardType: TextInputType.number,
             onChanged: (value) {
@@ -153,7 +165,10 @@ class _AddBillViewState extends State<AddBillView> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text("日期"),
+          child: Text(
+            "日期",
+            style: _billLabelStyle,
+          ),
         ),
         Expanded(
           child: Row(
@@ -254,7 +269,12 @@ class _AddBillViewState extends State<AddBillView> {
     }
     return Row(
       children: [
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("分类")),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              "分类",
+              style: _billLabelStyle,
+            )),
         Expanded(
           child: TextFormField(
             validator: (value) => value == null || value.isEmpty ? "请选择账单类别" : null,
@@ -275,7 +295,7 @@ class _AddBillViewState extends State<AddBillView> {
     }
     return Row(
       children: [
-        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("账户")),
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 8.0), child: Text("账户", style: _billLabelStyle)),
         Expanded(
           child: TextFormField(
             validator: (value) => value == null || value.isEmpty ? "请选择您的付款账户" : null,
