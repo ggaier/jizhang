@@ -58,14 +58,16 @@ class MyApp extends StatelessWidget {
           ],
           theme: ThemeData(
             primaryColor: Colors.white,
-            primaryColorLight: Colors.white,
-            primaryColorDark: Color.fromARGB(255, 57, 62, 70),
+            primaryColorLight: Colors.black26,
+            primaryColorDark: Colors.white24,
             primaryColorBrightness: Brightness.light,
             disabledColor: Color.fromARGB(255, 238, 238, 238),
-            hintColor: Color.fromARGB(255, 238, 238, 238),
+            hintColor: Colors.black26,
             accentColor: Color.fromARGB(255, 0, 173, 181),
             backgroundColor: Colors.white,
             scaffoldBackgroundColor: Colors.white,
+            dialogBackgroundColor: Colors.white,
+            appBarTheme: AppBarTheme(elevation: 0.5)
           ),
         ),
         providers: [

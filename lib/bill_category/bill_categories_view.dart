@@ -9,10 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 extension BillCategoriesView on AddBillBloc {
-
   showBillCategoryDialog(BuildContext context) async {
     final category = await showModalBottomSheet<BillCategory>(
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return BlocProvider(
           create: (context) => BillCategoryBloc(RepositoryProvider.of<BillCategoriesRepoImpl>(context)),
@@ -31,7 +31,7 @@ extension BillCategoriesView on AddBillBloc {
               print("category length: ${categories.length}");
               return Column(
                 children: [
-                  AppBar(automaticallyImplyLeading: true, title: Text("账户")),
+                  AppBar(title: Text("账单分类"), leading: null, automaticallyImplyLeading: false),
                   Flexible(
                     child: ListView.builder(
                       shrinkWrap: true,

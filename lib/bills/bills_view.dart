@@ -67,11 +67,14 @@ class _BillsViewState extends State<BillsView> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      elevation: 0,
+      elevation: 0.5,
       leadingWidth: 96,
       leading: Center(
-          child: TextButton(
-              onPressed: () {}, child: Text(_formattedDate(context), style: Theme.of(context).textTheme.bodyText1))),
+        child: TextButton(
+          onPressed: () {},
+          child: Text(_formattedDate(context), style: Theme.of(context).textTheme.bodyText1),
+        ),
+      ),
       title: Text(widget._title),
     );
   }

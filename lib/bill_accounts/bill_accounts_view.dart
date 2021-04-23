@@ -12,6 +12,7 @@ extension BillAccountsView on AddBillBloc {
   void showAccountsDialog(BuildContext context) async {
     final selectedAccount = await showModalBottomSheet<PayAccount>(
       context: context,
+      backgroundColor: Theme.of(context).backgroundColor,
       builder: (context) {
         return BlocProvider(
           create: (context) => BillAccountsBloc(accountsRepoIn: RepositoryProvider.of<AccountsRepoImpl>(context)),
@@ -29,7 +30,7 @@ extension BillAccountsView on AddBillBloc {
               }
               return Column(
                 children: [
-                  AppBar(automaticallyImplyLeading: true, title: Text("账户")),
+                  AppBar(automaticallyImplyLeading: false, title: Text("账户")),
                   Flexible(
                     child: ListView.builder(
                       scrollDirection: Axis.vertical,

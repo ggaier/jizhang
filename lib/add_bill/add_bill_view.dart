@@ -71,6 +71,7 @@ class _AddBillViewState extends State<AddBillView> {
         return Scaffold(
           appBar: AppBar(
             title: Text("${widget.isUpdate ? "编辑" : "新增"}${_billTypeToTitle(bill.billType)}"),
+            elevation: 0.5,
           ),
           body: _buildAddBillBody(bill),
         );
