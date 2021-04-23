@@ -70,7 +70,7 @@ class _AddBillViewState extends State<AddBillView> {
         print("init bill: ${bill.toJson()}");
         return Scaffold(
           appBar: AppBar(
-            title: Text("${widget.isUpdate ? "编辑" : ""}${_billTypeToTitle(bill.billType)}"),
+            title: Text("${widget.isUpdate ? "编辑" : "新增"}${_billTypeToTitle(bill.billType)}"),
           ),
           body: _buildAddBillBody(bill),
         );
