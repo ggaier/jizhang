@@ -67,7 +67,10 @@ class MyApp extends StatelessWidget {
             backgroundColor: Colors.white,
             scaffoldBackgroundColor: Colors.white,
             dialogBackgroundColor: Colors.white,
-            appBarTheme: AppBarTheme(elevation: 0.5)
+            appBarTheme: AppBarTheme(elevation: 0.5),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 0, 173, 181))),
+            ),
           ),
         ),
         providers: [

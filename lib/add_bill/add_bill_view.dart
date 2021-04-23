@@ -108,9 +108,11 @@ class _AddBillViewState extends State<AddBillView> {
   }
 
   Widget _saveBillBtn() {
-    return Center(
+    return Container(
+      margin: EdgeInsets.only(top: 16),
+      constraints: BoxConstraints.tightFor(height: 40),
       child: ElevatedButton(
-          child: const Text("保存"),
+          child: Center(child: const Text("保存")),
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
