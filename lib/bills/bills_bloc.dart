@@ -48,7 +48,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
     try {
       print("state: ${state.runtimeType}");
       if (state is ABSuccessState) {
-        yield ABSuccessState(state.getData<List<Bill>>()?..insert(0, event.addedBill));
+        yield BillsSwapState(bills: state.getData<List<Bill>>()?..insert(0, event.addedBill));
       }
     } on Exception catch (e) {
       print(e);
@@ -64,7 +64,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
           bills.removeAt(index);
           print("update index: $index, ${event.updatedBill.toJson()}");
           bills.insert(index, event.updatedBill);
-          yield BillUpdatedSuccessState(event.updatedBill, bills);
+          yield BillsSwapState(updatedBill: event.updatedBill, bills: bills);
         }
       }
     } on Exception catch (e) {}

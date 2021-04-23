@@ -48,22 +48,24 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         final bills = state.getData<List<Bill>>();
-        if (state is BillUpdatedSuccessState) {
-          final compositionBill = bills
-              ?.where((element) => element is CompositionBill)
-              .firstWhere((element) => element is CompositionBill && element.contains(state.updatedBill), orElse: null);
-          if (compositionBill is CompositionBill) {
-            var billsOfTheDay = compositionBill.billsOfTheDay;
-            final index = billsOfTheDay.indexWhere((element) => element.id == state.updatedBill.id);
-            billsOfTheDay
-              ..removeAt(index)
-              ..insert(index, state.updatedBill);
+        if (state is BillsSwapState) {
+          final updatedBill = state.updatedBill;
+          if (updatedBill != null) {
+            final compositionBill = bills
+                ?.where((element) => element is CompositionBill)
+                .firstWhere((element) => element is CompositionBill && element.contains(updatedBill), orElse: null);
+            if (compositionBill is CompositionBill) {
+              var billsOfTheDay = compositionBill.billsOfTheDay;
+              final index = billsOfTheDay.indexWhere((element) => element.id == updatedBill.id);
+              billsOfTheDay
+                ..removeAt(index)
+                ..insert(index, updatedBill);
+            }
           }
           _pagingController.itemList = bills;
         } else {
-          if (bills == null) return;
-          if (bills.length < _pageSize) {
-            _pagingController.appendLastPage(bills);
+          if (bills == null || bills.isEmpty || bills.length < _pageSize) {
+            _pagingController.appendLastPage(bills ?? List.empty());
           } else {
             final currentLength = _pagingController.value.itemList?.length ?? 0;
             final newLength = bills.length;
@@ -118,9 +120,18 @@ class _BillsViewState extends State<BillsView> {
   }
 
   Widget _separatedItem(BuildContext context, int index) {
-    final bill = _pagingController.value.itemList?.elementAt(index);
+    var items = _pagingController.value.itemList;
+    if (items == null) return Container();
+    final bill = items.elementAt(index);
     if (bill is CompositionBill) {
       return const Divider(indent: 16);
+    }
+    final nextIndex = index + 1;
+    if (nextIndex < items.length) {
+      final nextBill = items.elementAt(nextIndex);
+      if (nextBill is CompositionBill) {
+        return Divider(thickness: 8, color: Colors.grey[100]!);
+      }
     }
     return Container();
   }
@@ -140,10 +151,12 @@ class _BillsViewState extends State<BillsView> {
     return false;
   }
 
-  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
+  String languageCode(BuildContext context) =>
+      Localizations
+          .localeOf(context)
+          .languageCode;
 
   Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
-    print("bill total expense: ${bill.expenseAmount / 100}, ${bill.earningAmount / 100}");
     var themeData = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -153,8 +166,8 @@ class _BillsViewState extends State<BillsView> {
         children: [
           RichText(
               text: TextSpan(text: bill.getDay() + "日\n", style: themeData.textTheme.headline6, children: <TextSpan>[
-            TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
-          ])),
+                TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
+              ])),
           Text(
             "总支出：${bill.expenseAmount / 100.0}",
             style: themeData.textTheme.bodyText1?.copyWith(color: Colors.green[300]),

@@ -40,8 +40,10 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
           .item2
           .addBill(ofTheDay: bill);
     }
+    var insertOffset = 0;
     compositionBills.values.forEach((element) {
-      bills.insert(element.item1, element.item2);
+      bills.insert(element.item1 + insertOffset, element.item2);
+      insertOffset++;
     });
     return bills;
   }

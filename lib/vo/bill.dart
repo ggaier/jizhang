@@ -122,7 +122,6 @@ class CompositionBill extends Bill {
     billsOfTheDay.forEach((element) {
       sum += element.billType == BillType.earning ? element.amount : 0;
     });
-    print("earning sum: $sum");
     return sum;
   }
 
@@ -131,7 +130,6 @@ class CompositionBill extends Bill {
     billsOfTheDay.forEach((element) {
       sum += element.billType == BillType.expense ? element.amount : 0;
     });
-    print("expense sum: $sum");
     return sum;
   }
 
