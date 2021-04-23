@@ -195,32 +195,35 @@ class _AddBillViewState extends State<AddBillView> {
   }
 
   Widget _billTypeView(Color expenseColor, Color earningColor) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(width: 45),
-        OutlinedButton(
-            child: Text(
-              "支出",
-              style: TextStyle(color: expenseColor),
-            ),
-            onPressed: () => _onBillTypeChanged(BillType.expense),
-            style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: _BTN_PADDING),
-                side: BorderSide(color: expenseColor),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(_BTN_RADIUS), side: BorderSide(color: expenseColor)))),
-        OutlinedButton(
-            child: Text("收入", style: TextStyle(color: earningColor)),
-            onPressed: () => _onBillTypeChanged(BillType.earning),
-            style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: _BTN_PADDING),
-                side: BorderSide(color: earningColor),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(_BTN_RADIUS), side: BorderSide(color: earningColor)))),
-        SizedBox(width: 45),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(width: 45),
+          OutlinedButton(
+              child: Text(
+                "支出",
+                style: TextStyle(color: expenseColor),
+              ),
+              onPressed: () => _onBillTypeChanged(BillType.expense),
+              style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: _BTN_PADDING),
+                  side: BorderSide(color: expenseColor),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(_BTN_RADIUS), side: BorderSide(color: expenseColor)))),
+          OutlinedButton(
+              child: Text("收入", style: TextStyle(color: earningColor)),
+              onPressed: () => _onBillTypeChanged(BillType.earning),
+              style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: _BTN_PADDING),
+                  side: BorderSide(color: earningColor),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(_BTN_RADIUS), side: BorderSide(color: earningColor)))),
+          SizedBox(width: 45),
+        ],
+      ),
     );
   }
 

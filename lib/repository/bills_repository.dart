@@ -1,14 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:accountbook/db/bill_category_dao.dart';
 import 'package:accountbook/db/bill_dao.dart';
 import 'package:accountbook/db/pay_account_dao.dart';
-import 'package:accountbook/utils/date_utils.dart';
-import 'package:accountbook/vo/account_entity.dart';
 import 'package:accountbook/vo/bill.dart';
-import 'package:accountbook/vo/bill_category.dart';
-import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 abstract class BillsRepositoryIn {
   Future<List<Bill>> getBillsByPage(int page, int pageSize);
@@ -29,6 +25,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
     final offset = (revisedPage - 1) * pageSize;
     final bills = await _billDao.findBillsByPage(pageSize, offset);
     print("revised page: $revisedPage, offset: $offset, bills length: ${bills.length}");
+    final compositionBills = Map<int, Tuple2<int, CompositionBill>>();
     for (Bill bill in bills) {
       final categoryId = bill.categoryId;
       final category = await _billCategoryDao.findBillCategory(categoryId);
@@ -36,7 +33,16 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
       final payAccountId = bill.accountId;
       final payAccount = await _payAccountDao.findAccount(payAccountId);
       bill.account = payAccount;
+      final billDay = bill.billDate ~/ (1000 * 60 * 60 * 24);
+      final index = bills.indexOf(bill);
+      compositionBills
+          .putIfAbsent(billDay, () => Tuple2(index, CompositionBill([], billDay)))
+          .item2
+          .addBill(ofTheDay: bill);
     }
+    compositionBills.values.forEach((element) {
+      bills.insert(element.item1, element.item2);
+    });
     return bills;
   }
 

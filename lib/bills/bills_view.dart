@@ -43,7 +43,9 @@ class _BillsViewState extends State<BillsView> {
   }
 
   String _formattedDate(BuildContext context) {
-    final df = DateFormat.yMMM(languageCode(context));
+    var languageCode2 = languageCode(context);
+    print("languageCode2: $languageCode2");
+    final df = DateFormat.yMMM(languageCode2);
     return df.format(widget._date ?? DateTime.now());
   }
 
@@ -77,7 +79,6 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         final bills = state.getData<List<Bill>>();
-        print("state: $state");
         if (state is ABUpdatedState) {
           _pagingController.itemList = bills;
         } else {

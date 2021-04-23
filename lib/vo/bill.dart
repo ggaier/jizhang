@@ -105,8 +105,13 @@ class Bill {
 
 class CompositionBill extends Bill {
   final List<Bill> billsOfTheDay;
+  final int dayOfTheBill;
 
-  CompositionBill(this.billsOfTheDay) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
+  CompositionBill(this.billsOfTheDay, this.dayOfTheBill) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
+
+  void addBill({required Bill ofTheDay}) {
+    billsOfTheDay.add(ofTheDay);
+  }
 
   int get earningAmount {
     var sum = 0;
