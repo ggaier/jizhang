@@ -238,7 +238,11 @@ class _AddBillViewState extends State<AddBillView> {
   void _showDatePicker(BuildContext context) async {
     var nowTime = DateTime.now();
     final dateTime = await showDatePicker(
-        context: context, initialDate: nowTime, firstDate: DateTime.fromMillisecondsSinceEpoch(0), lastDate: nowTime);
+      context: context,
+      initialDate: nowTime,
+      firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+      lastDate: nowTime,
+    );
     if (dateTime == null) return;
     BlocProvider.of<AddBillBloc>(context).setBillDate(dateTime.millisecondsSinceEpoch);
   }
@@ -315,4 +319,3 @@ class _AddBillViewState extends State<AddBillView> {
     );
   }
 }
-
