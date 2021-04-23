@@ -1,4 +1,5 @@
 import 'package:accountbook/bills/bills_bloc.dart';
+import 'package:accountbook/bills/bills_state.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,17 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         final bills = state.getData<List<Bill>>();
-        if (state is ABUpdatedState) {
+        if (state is BillUpdatedSuccessState) {
+          final compositionBill = bills
+              ?.where((element) => element is CompositionBill)
+              .firstWhere((element) => element is CompositionBill && element.contains(state.updatedBill), orElse: null);
+          if (compositionBill is CompositionBill) {
+            var billsOfTheDay = compositionBill.billsOfTheDay;
+            final index = billsOfTheDay.indexWhere((element) => element.id == state.updatedBill.id);
+            billsOfTheDay
+              ..removeAt(index)
+              ..insert(index, state.updatedBill);
+          }
           _pagingController.itemList = bills;
         } else {
           if (bills == null) return;
@@ -162,6 +173,7 @@ class _BillsViewState extends State<BillsView> {
   }
 
   Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
+    print("bill total expense: ${bill.expenseAmount / 100}, ${bill.earningAmount / 100}");
     var themeData = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),

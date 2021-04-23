@@ -109,6 +109,10 @@ class CompositionBill extends Bill {
 
   CompositionBill(this.billsOfTheDay, this.dayOfTheBill) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
 
+  bool contains(Bill bill){
+    return billsOfTheDay.any((element) => element.id == bill.id);
+  }
+
   void addBill({required Bill ofTheDay}) {
     billsOfTheDay.add(ofTheDay);
   }
@@ -118,6 +122,7 @@ class CompositionBill extends Bill {
     billsOfTheDay.forEach((element) {
       sum += element.billType == BillType.earning ? element.amount : 0;
     });
+    print("earning sum: $sum");
     return sum;
   }
 
@@ -126,6 +131,7 @@ class CompositionBill extends Bill {
     billsOfTheDay.forEach((element) {
       sum += element.billType == BillType.expense ? element.amount : 0;
     });
+    print("expense sum: $sum");
     return sum;
   }
 

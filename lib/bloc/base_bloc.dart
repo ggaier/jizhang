@@ -22,10 +22,6 @@ class ABSuccessState<Item> extends BaseBlocState {
   }
 }
 
-class ABUpdatedState<Item> extends ABSuccessState<Item> {
-  ABUpdatedState([Item? item]) : super(item);
-}
-
 class ABFailureState extends BaseBlocState {
   final Exception? reason;
 

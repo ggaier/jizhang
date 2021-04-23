@@ -1,4 +1,5 @@
 import 'package:accountbook/bills/bills_bloc_event.dart';
+import 'package:accountbook/bills/bills_state.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/vo/bill.dart';
@@ -63,7 +64,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
           bills.removeAt(index);
           print("update index: $index, ${event.updatedBill.toJson()}");
           bills.insert(index, event.updatedBill);
-          yield ABUpdatedState(bills);
+          yield BillUpdatedSuccessState(event.updatedBill, bills);
         }
       }
     } on Exception catch (e) {}
