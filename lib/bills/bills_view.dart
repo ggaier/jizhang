@@ -9,13 +9,9 @@ import 'package:intl/intl.dart';
 import 'package:accountbook/utils/bill_ext.dart';
 
 class BillsView extends StatefulWidget {
-  final String _title;
-  final DateTime? _date = DateTime.now().toLocal();
   final ValueChanged<Bill?> _onTapped;
 
-  BillsView({required String title, required ValueChanged<Bill?> onTapped})
-      : _title = title,
-        _onTapped = onTapped;
+  BillsView({required ValueChanged<Bill?> onTapped}) : _onTapped = onTapped;
 
   @override
   State<StatefulWidget> createState() {
@@ -43,40 +39,9 @@ class _BillsViewState extends State<BillsView> {
     _pagingController.dispose();
   }
 
-  String _formattedDate(BuildContext context) {
-    var languageCode2 = languageCode(context);
-    print("languageCode2: $languageCode2");
-    final df = DateFormat.yMMM(languageCode2);
-    return df.format(widget._date ?? DateTime.now());
-  }
-
-  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBillsView(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => widget._onTapped(null),
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0.5,
-      leadingWidth: 96,
-      leading: Center(
-        child: TextButton(
-          onPressed: () {},
-          child: Text(_formattedDate(context), style: Theme.of(context).textTheme.bodyText1),
-        ),
-      ),
-      title: Text(widget._title),
-    );
+    return _buildBillsView(context);
   }
 
   Widget _buildBillsView(BuildContext context) {
@@ -174,6 +139,8 @@ class _BillsViewState extends State<BillsView> {
     if (day != preDay) return true;
     return false;
   }
+
+  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
 
   Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
     print("bill total expense: ${bill.expenseAmount / 100}, ${bill.earningAmount / 100}");

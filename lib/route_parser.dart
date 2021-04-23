@@ -32,9 +32,6 @@ class ABRouteInfoParser extends RouteInformationParser<ABRoutePath> {
     if (configuration.isHomePage) {
       return RouteInformation(location: "/");
     }
-    if (configuration.isAddBill) {
-      return RouteInformation(location: ABRoutePath.PATH_ADD_BILL);
-    }
-    return super.restoreRouteInformation(configuration);
+    return RouteInformation(location: configuration.path);
   }
 }
