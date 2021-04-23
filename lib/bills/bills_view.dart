@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:intl/intl.dart';
-import 'package:tuple/tuple.dart';
+import 'package:accountbook/utils/bill_ext.dart';
 
 class BillsView extends StatefulWidget {
   final String _title;
@@ -129,7 +129,7 @@ class _BillsViewState extends State<BillsView> {
             Spacer(),
             Text(
               "${bill.readableAmount}",
-              style: themeData.textTheme.bodyText1?.copyWith(color: Colors.red[300]),
+              style: themeData.textTheme.bodyText1?.copyWith(color: bill.billAmountColor),
             )
           ],
         ),
