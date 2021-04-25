@@ -98,6 +98,10 @@ class Bill {
     return (amount / 100).toStringAsFixed(2) + "$currencySymbol";
   }
 
+  int get yearMonthDay {
+    return billDate ~/ (1000 * 60 * 60 * 24);
+  }
+
   factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);
 
   Map<String, dynamic> toJson() => _$BillToJson(this);
@@ -105,11 +109,15 @@ class Bill {
 
 class CompositionBill extends Bill {
   final List<Bill> billsOfTheDay;
-  final int dayOfTheBill;
 
-  CompositionBill(this.billsOfTheDay, this.dayOfTheBill) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
+  CompositionBill(this.billsOfTheDay) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
 
-  bool contains(Bill bill){
+  @override
+  int get yearMonthDay {
+    return billsOfTheDay.isEmpty ? 0 : billsOfTheDay.first.yearMonthDay;
+  }
+
+  contains(Bill bill) {
     return billsOfTheDay.any((element) => element.id == bill.id);
   }
 

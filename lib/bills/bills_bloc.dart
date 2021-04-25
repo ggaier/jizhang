@@ -48,7 +48,16 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
     try {
       print("state: ${state.runtimeType}");
       if (state is ABSuccessState) {
-        yield BillsSwapState(bills: state.getData<List<Bill>>()?..insert(0, event.addedBill));
+        var data = state.getData<List<Bill>>() ?? List.empty(growable: true);
+        if (data.isEmpty || data.first.yearMonthDay != event.addedBill.yearMonthDay) {
+          data.insert(0, CompositionBill([event.addedBill]));
+          yield BillsSwapState(bills: data..insert(1, event.addedBill));
+        } else {
+          if (data.first is CompositionBill) {
+            (data.first as CompositionBill).addBill(ofTheDay: event.addedBill);
+            yield BillsSwapState(bills: data..insert(1, event.addedBill));
+          }
+        }
       }
     } on Exception catch (e) {
       print(e);

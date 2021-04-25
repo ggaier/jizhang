@@ -33,10 +33,10 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
       final payAccountId = bill.accountId;
       final payAccount = await _payAccountDao.findAccount(payAccountId);
       bill.account = payAccount;
-      final billDay = bill.billDate ~/ (1000 * 60 * 60 * 24);
+      final billDay = bill.yearMonthDay;
       final index = bills.indexOf(bill);
       compositionBills
-          .putIfAbsent(billDay, () => Tuple2(index, CompositionBill([], billDay)))
+          .putIfAbsent(billDay, () => Tuple2(index, CompositionBill([])))
           .item2
           .addBill(ofTheDay: bill);
     }
