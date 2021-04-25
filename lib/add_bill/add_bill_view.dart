@@ -64,13 +64,10 @@ class _AddBillViewState extends State<AddBillView> {
     return BlocBuilder<AddBillBloc, BaseBlocState>(
       builder: (context, state) {
         if (state is ABCompleteState) {
-          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-            widget.onAddBill(Tuple2(state.bill, widget.isUpdate));
-          });
           return Container();
         }
         var bill = _addBillBloc.stateBill;
-        print("init bill: ${bill.toJson()}");
+        print("add bill: ${bill.toJson()}");
         return Scaffold(
           appBar: AppBar(
             title: Text("${widget.isUpdate ? "编辑" : "新增"}${_billTypeToTitle(bill.billType)}"),
@@ -116,10 +113,13 @@ class _AddBillViewState extends State<AddBillView> {
       constraints: BoxConstraints.tightFor(height: 40),
       child: ElevatedButton(
           child: Center(child: const Text("保存")),
-          onPressed: () {
+          onPressed: () async {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
-              _addBillBloc.saveBill();
+              final bill = _addBillBloc.stateBill;
+              await _addBillBloc.saveBill();
+              print("add bill complete");
+              widget.onAddBill(Tuple2(bill, widget.isUpdate));
               Navigator.maybePop(context, "");
             }
           }),

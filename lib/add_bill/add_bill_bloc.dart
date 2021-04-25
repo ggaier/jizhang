@@ -54,8 +54,9 @@ class AddBillBloc extends Cubit<BaseBlocState> {
     emit(ABSuccessState(stateBill.copyWith(remark: remark)));
   }
 
-  void saveBill() async {
-    await _billsRepositoryIn.saveBill(stateBill);
-    emit(ABCompleteState(stateBill));
+  Future<void> saveBill() async {
+    final id = await _billsRepositoryIn.saveBill(stateBill);
+    print("emit complete state");
+    emit(ABCompleteState(stateBill.id == null ? stateBill.copyWith(id: id) : stateBill));
   }
 }

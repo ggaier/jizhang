@@ -14,7 +14,7 @@ abstract class BillsRepositoryIn {
   /// 时间单位都是ms.
   Future<List<Bill>> getBillsByDateRange(int startDate, int endDate);
 
-  Future<bool> saveBill(Bill bill);
+  Future<int> saveBill(Bill bill);
 }
 
 class BillsRepositoryImpl implements BillsRepositoryIn {
@@ -55,7 +55,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
   }
 
   @override
-  Future<bool> saveBill(Bill bill) async {
+  Future<int> saveBill(Bill bill) async {
     var billId = bill.id;
     int row = 0;
     if (billId != null) {
@@ -67,7 +67,7 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
     } else {
       row = await _billDao.insertBill(bill);
     }
-    return row == 1;
+    return row;
   }
 
   @override

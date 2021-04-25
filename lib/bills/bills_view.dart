@@ -1,12 +1,10 @@
 import 'package:accountbook/bills/bills_bloc.dart';
 import 'package:accountbook/bills/bills_bloc_event.dart';
-import 'package:accountbook/bills/bills_state.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/vo/bill.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:intl/intl.dart';
 import 'package:accountbook/utils/bill_ext.dart';
 
 class BillsView extends StatefulWidget {
@@ -51,13 +49,8 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         var bills = state.getData<List<Bill>>();
-        if (state is BillsSwapState) {
-          _pagingController.itemList = null;
-          print("swap items: ${_pagingController.itemList?.length}");
-          bills?.forEach((element) {
-            print("swap bill state: ${element.toJson()}");
-          });
-        }
+        _pagingController.itemList = null;
+        print("swap items: ${_pagingController.itemList?.length}");
         _pagingController.appendLastPage(bills ?? List.empty());
       },
       child: PagedListView.separated(

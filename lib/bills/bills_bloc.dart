@@ -1,5 +1,4 @@
 import 'package:accountbook/bills/bills_bloc_event.dart';
-import 'package:accountbook/bills/bills_state.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/repository/bills_repository.dart';
 import 'package:accountbook/vo/bill.dart';
@@ -13,6 +12,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
   BillsBloc(this._billsRepositoryIn) : super(ABInitialState());
 
   void addNewBill(Bill bill) {
+    print("addNewBill: ${bill.toJson()}");
     add(BillAddedEvent(bill));
   }
 
@@ -45,16 +45,16 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
 
   Stream<BaseBlocState> _mapBillAddedEventToState(BillAddedEvent event) async* {
     try {
-      print("state: ${state.runtimeType}");
+      print("mapAddBillEventToState");
       if (state is ABSuccessState) {
         var data = state.getData<List<Bill>>() ?? List.empty(growable: true);
         if (data.isEmpty || data.first.yyyyMMdd != event.addedBill.yyyyMMdd) {
           data.insert(0, CompositionBill([event.addedBill]));
-          yield BillsSwapState(bills: data..insert(1, event.addedBill));
+          yield ABSuccessState(data..insert(1, event.addedBill));
         } else {
           if (data.first is CompositionBill) {
             (data.first as CompositionBill).addBill(ofTheDay: event.addedBill);
-            yield BillsSwapState(bills: data..insert(1, event.addedBill));
+            yield ABSuccessState(data..insert(1, event.addedBill));
           }
         }
       }
@@ -94,10 +94,10 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
               if (modifiedBill.billTime != updatedBill.billTime) {
                 compositionBill.sortByBillTime();
               }
-              yield BillsSwapState(bills: bills);
+              yield ABSuccessState(bills);
             } else {
               final reloadBills = await _billsRepositoryIn.getBillsByDateRange(_startDate, _endDate);
-              yield BillsSwapState(bills: reloadBills);
+              yield ABSuccessState(reloadBills);
             }
           }
         }
