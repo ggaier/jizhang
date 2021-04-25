@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddBillBloc extends Cubit<BaseBlocState> {
+  final BillsRepositoryIn _billsRepositoryIn;
   AddBillBloc(this._billsRepositoryIn) : super(ABInitialState());
 
-  final BillsRepositoryIn _billsRepositoryIn;
 
   Bill get stateBill {
     var bill = state.getData<Bill>();
@@ -56,6 +56,6 @@ class AddBillBloc extends Cubit<BaseBlocState> {
 
   void saveBill() async {
     await _billsRepositoryIn.saveBill(stateBill);
-    emit(ABCompleteState());
+    emit(ABCompleteState(stateBill));
   }
 }

@@ -6,14 +6,11 @@ import 'package:accountbook/vo/bill.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
-  static const PAGE_SIZE = 50;
   final BillsRepositoryIn _billsRepositoryIn;
+  int _startDate = 0;
+  int _endDate = 0;
 
   BillsBloc(this._billsRepositoryIn) : super(ABInitialState());
-
-  void getPagedBills(int page) {
-    add(BillsLoadedEvent(page));
-  }
 
   void addNewBill(Bill bill) {
     add(BillAddedEvent(bill));
@@ -36,7 +33,9 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
 
   Stream<BaseBlocState> _mapBillsLoadedEventToState(BillsLoadedEvent event) async* {
     try {
-      final bills = await _billsRepositoryIn.getBillsByPage(event.page, PAGE_SIZE);
+      _startDate = event.startDate;
+      _endDate = event.endDate;
+      final bills = await _billsRepositoryIn.getBillsByDateRange(event.startDate, event.endDate);
       yield ABSuccessState(bills);
     } on Exception catch (e) {
       print(e);
@@ -49,7 +48,7 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
       print("state: ${state.runtimeType}");
       if (state is ABSuccessState) {
         var data = state.getData<List<Bill>>() ?? List.empty(growable: true);
-        if (data.isEmpty || data.first.yearMonthDay != event.addedBill.yearMonthDay) {
+        if (data.isEmpty || data.first.yyyyMMdd != event.addedBill.yyyyMMdd) {
           data.insert(0, CompositionBill([event.addedBill]));
           yield BillsSwapState(bills: data..insert(1, event.addedBill));
         } else {
@@ -68,12 +67,39 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
     try {
       if (state is ABSuccessState) {
         final bills = state.getData<List<Bill>>();
-        if (bills != null) {
-          final index = bills.indexWhere((element) => element.id == event.updatedBill.id);
-          bills.removeAt(index);
-          print("update index: $index, ${event.updatedBill.toJson()}");
-          bills.insert(index, event.updatedBill);
-          yield BillsSwapState(updatedBill: event.updatedBill, bills: bills);
+        if (bills == null) return;
+        print("updated bill: ${event.updatedBill.toJson()}");
+        final index = bills.indexWhere((element) => element.id == event.updatedBill.id);
+        if (index >= 0) {
+          bills
+            ..removeAt(index)
+            ..insert(index, event.updatedBill);
+        }
+        final updatedBill = event.updatedBill;
+        final compositionBill = bills
+            .where((element) => element is CompositionBill)
+            .firstWhere((element) => element is CompositionBill && element.contains(updatedBill), orElse: null);
+        print("compositionBill: $compositionBill");
+        if (compositionBill is CompositionBill) {
+          var billsOfTheDay = compositionBill.billsOfTheDay;
+          final index = billsOfTheDay.indexWhere((element) => element.id == updatedBill.id);
+          if (index >= 0) {
+            final modifiedBill = billsOfTheDay[index];
+            print("modifiedBill: ${modifiedBill.yyyyMMdd}, ${updatedBill.yyyyMMdd}");
+            if (modifiedBill.yyyyMMdd == updatedBill.yyyyMMdd) {
+              billsOfTheDay
+                ..removeAt(index)
+                ..insert(index, updatedBill);
+              print("modifiedBillTime: ${modifiedBill.billTime}, ${updatedBill.billTime}");
+              if (modifiedBill.billTime != updatedBill.billTime) {
+                compositionBill.sortByBillTime();
+              }
+              yield BillsSwapState(bills: bills);
+            } else {
+              final reloadBills = await _billsRepositoryIn.getBillsByDateRange(_startDate, _endDate);
+              yield BillsSwapState(bills: reloadBills);
+            }
+          }
         }
       }
     } on Exception catch (e) {}

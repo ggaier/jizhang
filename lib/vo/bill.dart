@@ -98,8 +98,9 @@ class Bill {
     return (amount / 100).toStringAsFixed(2) + "$currencySymbol";
   }
 
-  int get yearMonthDay {
-    return billDate ~/ (1000 * 60 * 60 * 24);
+  String get yyyyMMdd {
+    var dateTime = billDateDateTime;
+    return "${dateTime.year}${dateTime.month}${dateTime.day}";
   }
 
   factory Bill.fromJson(Map<String, dynamic> json) => _$BillFromJson(json);
@@ -113,8 +114,8 @@ class CompositionBill extends Bill {
   CompositionBill(this.billsOfTheDay) : super(0, 0, 0, 0, 0, 0, '', '', BillType.summary);
 
   @override
-  int get yearMonthDay {
-    return billsOfTheDay.isEmpty ? 0 : billsOfTheDay.first.yearMonthDay;
+  String get yyyyMMdd {
+    return billsOfTheDay.isEmpty ? "" : billsOfTheDay.first.yyyyMMdd;
   }
 
   contains(Bill bill) {
@@ -123,6 +124,11 @@ class CompositionBill extends Bill {
 
   void addBill({required Bill ofTheDay}) {
     billsOfTheDay.add(ofTheDay);
+  }
+
+  ///按照时间顺序从近及远排列.
+  void sortByBillTime() {
+    billsOfTheDay.sort((billA, billB) => billB.billTime - billA.billTime);
   }
 
   int get earningAmount {

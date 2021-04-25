@@ -9,6 +9,11 @@ import 'package:tuple/tuple.dart';
 abstract class BillsRepositoryIn {
   Future<List<Bill>> getBillsByPage(int page, int pageSize);
 
+  /// 按照时间段来查询其间的所有账单.
+  /// 其中[startDate] 是开始时间(包含), [endDate] 是结束时间(不包含).
+  /// 时间单位都是ms.
+  Future<List<Bill>> getBillsByDateRange(int startDate, int endDate);
+
   Future<bool> saveBill(Bill bill);
 }
 
@@ -25,7 +30,12 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
     final offset = (revisedPage - 1) * pageSize;
     final bills = await _billDao.findBillsByPage(pageSize, offset);
     print("revised page: $revisedPage, offset: $offset, bills length: ${bills.length}");
-    final compositionBills = Map<int, Tuple2<int, CompositionBill>>();
+    await processBills(bills);
+    return bills;
+  }
+
+  Future processBills(List<Bill> bills) async {
+    final compositionBills = Map<String, Tuple2<int, CompositionBill>>();
     for (Bill bill in bills) {
       final categoryId = bill.categoryId;
       final category = await _billCategoryDao.findBillCategory(categoryId);
@@ -33,19 +43,15 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
       final payAccountId = bill.accountId;
       final payAccount = await _payAccountDao.findAccount(payAccountId);
       bill.account = payAccount;
-      final billDay = bill.yearMonthDay;
+      final billDay = bill.yyyyMMdd;
       final index = bills.indexOf(bill);
-      compositionBills
-          .putIfAbsent(billDay, () => Tuple2(index, CompositionBill([])))
-          .item2
-          .addBill(ofTheDay: bill);
+      compositionBills.putIfAbsent(billDay, () => Tuple2(index, CompositionBill([]))).item2.addBill(ofTheDay: bill);
     }
     var insertOffset = 0;
     compositionBills.values.forEach((element) {
       bills.insert(element.item1 + insertOffset, element.item2);
       insertOffset++;
     });
-    return bills;
   }
 
   @override
@@ -56,10 +62,19 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
       final foundBill = await _billDao.findBillById(billId);
       if (foundBill != null) {
         row = await _billDao.updateBill(bill);
+        print("update bill: $row");
       }
     } else {
       row = await _billDao.insertBill(bill);
     }
     return row == 1;
+  }
+
+  @override
+  Future<List<Bill>> getBillsByDateRange(int startDate, int endDate) async {
+    final bills = await _billDao.findBillsByMonthRange(startDate, endDate);
+    print("month range $startDate, $endDate, bills size: ${bills.length}");
+    await processBills(bills);
+    return bills;
   }
 }

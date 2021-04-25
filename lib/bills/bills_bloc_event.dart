@@ -5,9 +5,10 @@ import 'package:meta/meta.dart';
 abstract class BillsBlocEvent {}
 
 class BillsLoadedEvent extends BillsBlocEvent {
-  final int page;
+  final int startDate;
+  final int endDate;
 
-  BillsLoadedEvent(this.page);
+  BillsLoadedEvent(this.startDate, this.endDate);
 }
 
 class BillAddedEvent extends BillsBlocEvent {

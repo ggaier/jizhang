@@ -1,4 +1,5 @@
 import 'package:accountbook/bills/bills_bloc.dart';
+import 'package:accountbook/bills/bills_bloc_event.dart';
 import 'package:accountbook/bills/bills_state.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/vo/bill.dart';
@@ -20,15 +21,17 @@ class BillsView extends StatefulWidget {
 }
 
 class _BillsViewState extends State<BillsView> {
-  static const _pageSize = BillsBloc.PAGE_SIZE;
   final PagingController<int, Bill> _pagingController = PagingController(firstPageKey: 1);
 
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
-      print("page key: $pageKey");
-      final bloc = context.read<BillsBloc>();
-      bloc.getPagedBills(pageKey);
+      final now = DateTime.now();
+      final startDate = DateTime(now.year, now.month);
+      final endDate = DateTime(now.year, now.month, now.day + 1);
+      print("page key: $pageKey, startDate: ${startDate.year}, ${startDate.month}, ${startDate.day}");
+      final event = BillsLoadedEvent(startDate.millisecondsSinceEpoch, endDate.millisecondsSinceEpoch);
+      context.read<BillsBloc>().add(event);
     });
     super.initState();
   }
@@ -47,32 +50,15 @@ class _BillsViewState extends State<BillsView> {
   Widget _buildBillsView(BuildContext context) {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
-        final bills = state.getData<List<Bill>>();
+        var bills = state.getData<List<Bill>>();
         if (state is BillsSwapState) {
-          final updatedBill = state.updatedBill;
-          if (updatedBill != null) {
-            final compositionBill = bills
-                ?.where((element) => element is CompositionBill)
-                .firstWhere((element) => element is CompositionBill && element.contains(updatedBill), orElse: null);
-            if (compositionBill is CompositionBill) {
-              var billsOfTheDay = compositionBill.billsOfTheDay;
-              final index = billsOfTheDay.indexWhere((element) => element.id == updatedBill.id);
-              billsOfTheDay
-                ..removeAt(index)
-                ..insert(index, updatedBill);
-            }
-          }
-          _pagingController.itemList = bills;
-        } else {
-          if (bills == null || bills.isEmpty || bills.length < _pageSize) {
-            _pagingController.appendLastPage(bills ?? List.empty());
-          } else {
-            final currentLength = _pagingController.value.itemList?.length ?? 0;
-            final newLength = bills.length;
-            final nextPage = ((currentLength + newLength) ~/ _pageSize) + 1;
-            _pagingController.appendPage(bills, nextPage);
-          }
+          _pagingController.itemList = null;
+          print("swap items: ${_pagingController.itemList?.length}");
+          bills?.forEach((element) {
+            print("swap bill state: ${element.toJson()}");
+          });
         }
+        _pagingController.appendLastPage(bills ?? List.empty());
       },
       child: PagedListView.separated(
         pagingController: _pagingController,
@@ -151,10 +137,7 @@ class _BillsViewState extends State<BillsView> {
     return false;
   }
 
-  String languageCode(BuildContext context) =>
-      Localizations
-          .localeOf(context)
-          .languageCode;
+  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
 
   Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
     var themeData = Theme.of(context);
@@ -166,8 +149,8 @@ class _BillsViewState extends State<BillsView> {
         children: [
           RichText(
               text: TextSpan(text: bill.getDay() + "日\n", style: themeData.textTheme.headline6, children: <TextSpan>[
-                TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
-              ])),
+            TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
+          ])),
           Text(
             "总支出：${bill.expenseAmount / 100.0}",
             style: themeData.textTheme.bodyText1?.copyWith(color: Colors.green[300]),

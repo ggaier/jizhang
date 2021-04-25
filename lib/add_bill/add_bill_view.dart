@@ -64,6 +64,9 @@ class _AddBillViewState extends State<AddBillView> {
     return BlocBuilder<AddBillBloc, BaseBlocState>(
       builder: (context, state) {
         if (state is ABCompleteState) {
+          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+            widget.onAddBill(Tuple2(state.bill, widget.isUpdate));
+          });
           return Container();
         }
         var bill = _addBillBloc.stateBill;
@@ -116,7 +119,6 @@ class _AddBillViewState extends State<AddBillView> {
           onPressed: () {
             if (_formState.currentState?.validate() == true) {
               _formState.currentState?.save();
-              widget.onAddBill(Tuple2(_addBillBloc.stateBill, widget.isUpdate));
               _addBillBloc.saveBill();
               Navigator.maybePop(context, "");
             }

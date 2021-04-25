@@ -1,4 +1,6 @@
 //是否需要实现Equatable还需要再确认.
+import 'package:accountbook/vo/bill.dart';
+
 abstract class BaseBlocState {
   const BaseBlocState();
 }
@@ -30,7 +32,10 @@ class ABFailureState extends BaseBlocState {
   ABFailureState.cause(String cause) : reason = Exception(cause);
 }
 
-class ABCompleteState extends BaseBlocState {}
+class ABCompleteState extends BaseBlocState {
+  final Bill bill;
+  ABCompleteState(this.bill);
+}
 
 extension BlocStateExt on BaseBlocState {
   bool get isInitial {
