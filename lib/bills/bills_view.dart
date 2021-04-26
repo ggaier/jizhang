@@ -49,9 +49,10 @@ class _BillsViewState extends State<BillsView> {
     return BlocListener<BillsBloc, BaseBlocState>(
       listener: (context, state) {
         var bills = state.getData<List<Bill>>();
-        _pagingController.itemList = null;
+        _pagingController.itemList = List.empty();
         print("swap items: ${_pagingController.itemList?.length}");
         _pagingController.appendLastPage(bills ?? List.empty());
+        print("paging controller status: ${_pagingController.value.status}");
       },
       child: PagedListView.separated(
         pagingController: _pagingController,
