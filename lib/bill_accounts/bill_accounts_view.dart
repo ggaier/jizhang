@@ -37,7 +37,10 @@ extension BillAccountsView on AddBillBloc {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         var account = accounts[index];
-                        return TextButton(onPressed: () => Navigator.pop(context, account), child: Text(account.name));
+                        return TextButton(
+                          onPressed: () => Navigator.pop(context, account),
+                          child: Text(account.name, style: Theme.of(context).textTheme.bodyText1),
+                        );
                       },
                       itemCount: accounts.length,
                     ),

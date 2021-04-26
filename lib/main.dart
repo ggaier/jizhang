@@ -70,9 +70,6 @@ class MyApp extends StatelessWidget {
             dialogBackgroundColor: Colors.white,
             appBarTheme: AppBarTheme(elevation: 0.5),
             inputDecorationTheme: InputDecorationTheme(focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.red[400]!))),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blueGrey[400])),
-            ),
           ),
         ),
         providers: [

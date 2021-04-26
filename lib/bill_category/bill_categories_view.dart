@@ -39,7 +39,9 @@ extension BillCategoriesView on AddBillBloc {
                       itemBuilder: (context, index) {
                         var category = categories[index];
                         return TextButton(
-                            onPressed: () => Navigator.pop(context, category), child: Text(category.name));
+                          onPressed: () => Navigator.pop(context, category),
+                          child: Text(category.name, style: Theme.of(context).textTheme.bodyText1),
+                        );
                       },
                       itemCount: categories.length,
                     ),
