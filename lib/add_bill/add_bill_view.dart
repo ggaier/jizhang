@@ -296,7 +296,7 @@ class _AddBillViewState extends State<AddBillView> {
             onTap: () => _addBillBloc.showBillCategoryDialog(context),
           ),
         )
-      ],
+      ],git
     );
   }
 
