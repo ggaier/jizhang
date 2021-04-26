@@ -15,6 +15,8 @@ abstract class BillsRepositoryIn {
   Future<List<Bill>> getBillsByDateRange(int startDate, int endDate);
 
   Future<int> saveBill(Bill bill);
+
+  Future<int> deleteBill(Bill bill);
 }
 
 class BillsRepositoryImpl implements BillsRepositoryIn {
@@ -76,5 +78,10 @@ class BillsRepositoryImpl implements BillsRepositoryIn {
     print("month range $startDate, $endDate, bills size: ${bills.length}");
     await processBills(bills);
     return bills;
+  }
+
+  @override
+  Future<int> deleteBill(Bill bill) {
+    return _billDao.deleteBill(bill);
   }
 }

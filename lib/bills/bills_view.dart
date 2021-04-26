@@ -2,6 +2,7 @@ import 'package:accountbook/bills/bills_bloc.dart';
 import 'package:accountbook/bills/bills_bloc_event.dart';
 import 'package:accountbook/bloc/base_bloc.dart';
 import 'package:accountbook/vo/bill.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -20,6 +21,11 @@ class BillsView extends StatefulWidget {
 
 class _BillsViewState extends State<BillsView> {
   final PagingController<int, Bill> _pagingController = PagingController(firstPageKey: 1);
+  TapDownDetails? _tapDownDetails;
+
+  BillsBloc get _billsBloc {
+    return context.read<BillsBloc>();
+  }
 
   @override
   void initState() {
@@ -70,7 +76,9 @@ class _BillsViewState extends State<BillsView> {
       return _buildDayBillView(bill, context);
     }
     return InkWell(
+      onTapDown: (details) => _tapDownDetails = details,
       onTap: () => widget._onTapped(bill),
+      onLongPress: () => _showDeleteMenu(bill),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         child: Row(
@@ -116,22 +124,10 @@ class _BillsViewState extends State<BillsView> {
     return Container();
   }
 
-  bool _isNotSameDay(Bill bill, Bill preBill) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(bill.billDate);
-    final year = dateTime.year;
-    final month = dateTime.month;
-    final day = dateTime.day;
-    final preDateTime = DateTime.fromMillisecondsSinceEpoch(preBill.billDate);
-    final preYear = preDateTime.year;
-    final preMonth = preDateTime.month;
-    final preDay = preDateTime.day;
-    if (year != preYear) return true;
-    if (month != preMonth) return true;
-    if (day != preDay) return true;
-    return false;
-  }
-
-  String languageCode(BuildContext context) => Localizations.localeOf(context).languageCode;
+  String languageCode(BuildContext context) =>
+      Localizations
+          .localeOf(context)
+          .languageCode;
 
   Widget _buildDayBillView(CompositionBill bill, BuildContext context) {
     var themeData = Theme.of(context);
@@ -143,8 +139,8 @@ class _BillsViewState extends State<BillsView> {
         children: [
           RichText(
               text: TextSpan(text: bill.getDay() + "日\n", style: themeData.textTheme.headline6, children: <TextSpan>[
-            TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
-          ])),
+                TextSpan(text: bill.getFmtDate(languageCode(context)), style: themeData.textTheme.bodyText1)
+              ])),
           Text(
             "总支出：${bill.expenseAmount / 100.0}",
             style: themeData.textTheme.bodyText1?.copyWith(color: Colors.green[300]),
@@ -156,5 +152,18 @@ class _BillsViewState extends State<BillsView> {
         ],
       ),
     );
+  }
+
+  _showDeleteMenu(Bill bill) async {
+    final tapDetails = _tapDownDetails;
+    if (tapDetails == null) return;
+    final tapPosition = tapDetails.globalPosition;
+    final rr = RelativeRect.fromLTRB(tapPosition.dx, tapPosition.dy, tapPosition.dx, tapPosition.dy);
+    final selectedItem = await showMenu(context: context, position: rr, items: [
+      PopupMenuItem(child: Text("删除"), value: 0),
+    ]);
+    if (selectedItem == 0) {
+      _billsBloc.add(BillDeleteEvent(bill));
+    }
   }
 }

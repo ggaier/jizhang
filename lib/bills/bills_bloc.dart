@@ -28,6 +28,8 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
       yield* _mapBillAddedEventToState(event);
     } else if (event is BillUpdateEvent) {
       yield* _mapBillUpdateEventToState(event);
+    } else if (event is BillDeleteEvent) {
+      yield* _mapBillDeleteToState(event);
     }
   }
 
@@ -101,6 +103,27 @@ class BillsBloc extends Bloc<BillsBlocEvent, BaseBlocState> {
             }
           }
         }
+      }
+    } on Exception catch (e) {}
+  }
+
+  Stream<BaseBlocState> _mapBillDeleteToState(BillDeleteEvent event) async* {
+    try {
+      await _billsRepositoryIn.deleteBill(event.bill);
+      if (state is ABSuccessState) {
+        final bills = state.getData<List<Bill>>();
+        bills?.removeWhere((element) => element.id == event.bill.id);
+        final cb = bills?.firstWhere(
+          (element) => element is CompositionBill && element.contains(event.bill),
+          orElse: null,
+        );
+        if (cb is CompositionBill) {
+          cb.billsOfTheDay.removeWhere((element) => element.id == event.bill.id);
+          if (cb.billsOfTheDay.isEmpty) {
+            bills?.remove(cb);
+          }
+        }
+        yield ABSuccessState(bills);
       }
     } on Exception catch (e) {}
   }

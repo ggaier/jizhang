@@ -24,4 +24,7 @@ abstract class BillDao {
 
   @update
   Future<int> updateBill(Bill bill);
+
+  @delete
+  Future<int> deleteBill(Bill bill);
 }

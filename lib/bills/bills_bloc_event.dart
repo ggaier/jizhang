@@ -22,3 +22,9 @@ class BillUpdateEvent extends BillsBlocEvent {
 
   BillUpdateEvent(this.updatedBill);
 }
+
+class BillDeleteEvent extends BillsBlocEvent {
+  final Bill bill;
+
+  BillDeleteEvent(this.bill);
+}
